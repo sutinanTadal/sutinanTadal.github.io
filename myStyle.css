@@ -36,6 +36,10 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
+  height: 8%;
+  background-color: #454545;
+  color: #ADADAD;
+  padding-left: 5%;
 }
 
 .sticky + .content {
