@@ -24,11 +24,11 @@ body {
 }
 
 .header{
-  background-color: #454545;
-  padding: 30px;
-  text-align: center;
+  padding: 15px;
+  text-align: left;;
   display: block;
-  color: #f1f1f1;
+  color: #454545;
+  font-size: 6vw;
 }
 
 .sticky {
@@ -81,7 +81,7 @@ body {
 .sidenav a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 25px;
   color: white;
   display: block;
 }
