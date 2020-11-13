@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: "Lato", sans-serif;
-  background-color: whitesmoke;
+  background-color: ;
   font-size: 15px;
   color: #454545;
 }
@@ -24,7 +24,7 @@ body {
 	border-radius: 4px;
 	text-align: justify;
 	text-justify: inter-word;
-	background-color: #D1D1D1;
+	background-color: #C3C3C3;
 	color: #454545;
 }
 
