@@ -6,8 +6,6 @@ body {
   background-color: whitesmoke;
   font-size: 15px;
   color: #454545;
-  margin-left: 5%;
-  margin-right: 5%;
 }
 
 
@@ -61,6 +59,8 @@ body {
 
 .noNav{
 	padding: 5%;
+	margin-left: 5%;
+	margin-right: 5%;
 }
 
 .sidenav {
