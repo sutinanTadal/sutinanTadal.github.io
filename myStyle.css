@@ -6,7 +6,7 @@ body {
   padding-left: 150px;
   background-color: whitesmoke;
   font-size: 15px;
-  color: #5e5e5e
+  color: #454545
 }
 
 .main {
@@ -24,7 +24,7 @@ body {
 }
 
 .header{
-  background-color: #5e5e5e;
+  background-color: #454545;
   padding: 30px;
   text-align: center;
   display: block;
@@ -73,7 +73,7 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #5E5E5E;
+  background-color: #454545;
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -87,7 +87,7 @@ body {
 }
 
 .sidenav a:hover {
-  background-color: #434343;
+  background-color: #5e5e5e;
 }
 
 @media screen and (max-width: 1300px) {
