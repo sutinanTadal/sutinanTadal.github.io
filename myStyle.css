@@ -4,7 +4,7 @@ body {
   margin: 0;
   font-family: "Lato", sans-serif;
   background-color: whitesmoke;
-  font-size: 3vw;
+  font-size: 15px;
   color: #454545;
 }
 
@@ -29,7 +29,7 @@ body {
 }
 
 .header{
-  padding-top: 10%;
+  padding-top: 90px;
   margin: 0px;
   text-align: left;
   display: block;
@@ -41,7 +41,7 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  height: auto;
+  height: 60px;
   background-color: #454545;
   color: #ADADAD;
   padding-left: 5%;
@@ -72,14 +72,12 @@ body {
   background-color: #454545;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 60px;
-  padding-bottom: 60px;
 }
 
 .sidenav a {
-  padding: 10px 8px 8px 32px;
+  padding: 15px 8px 8px 32px;
   text-decoration: none;
-  font-size: 5vw;
+  font-size: 20px;
   color: #818181;
   display: block;
   transition: 0.3s;
