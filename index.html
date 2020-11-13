@@ -7,17 +7,20 @@
 </head>
 
 <body>
-<div class="sideNav" id="navbar">
-	<a>Profile</a>
-	<a>Education</a>
-</div>
-	
-<div class="noNav">
+	<div class="noNav">
+	<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>	
 		<div class="header">
 			<h2>SUTINAN TADALIMAVAD</h2>
-			<p class="subScript"> UI/UX design, Front-End developer, Full stack developer, Dataengineer&nbsp;&nbsp; </p>
+			<p class="subScript"> UI/UX design, Front-End develop, Data engineer </p>
 		</div>
-
+		<div id="mySidenav" class="sidenav">
+ 			 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+ 			 <a href="#">About</a>
+ 			 <a href="#">Services</a>
+ 			 <a href="#">Clients</a>
+ 			 <a href="#">Contact</a>
+</div>
+			
 		<div class="mainContent">
 			<h2>Profile</h2>
 			<p>27(43/418) Soi 54 Yak 4-11, Rama2 Road, 
@@ -75,19 +78,13 @@
 		</div>
 	</div>
 <script>
-window.onscroll = function() {myFunction()};
-
-var navbar = document.getElementById("navbar");
-var sticky = navbar.offsetTop;
-
-function myFunction() {
-  if (window.pageYOffset >= sticky) {
-    navbar.classList.add("sticky")
-  } else {
-    navbar.classList.remove("sticky");
-  }
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
 }
-	
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
 </script>
 </body>
 </html>
