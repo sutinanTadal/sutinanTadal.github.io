@@ -6,6 +6,7 @@ body {
   padding-left: 150px;
   background-color: whitesmoke;
   font-size: 15px;
+  color: #5e5e5e
 }
 
 .main {
@@ -23,7 +24,7 @@ body {
 }
 
 .header{
-  background-color: #111;
+  background-color: #5e5e5e;
   padding: 30px;
   text-align: center;
   display: block;
@@ -72,7 +73,7 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  background-color: #5E5E5E;
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -81,12 +82,12 @@ body {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 20px;
-  color: #818181;
+  color: white;
   display: block;
 }
 
 .sidenav a:hover {
-  color: #f1f1f1;
+  background-color: #434343;
 }
 
 @media screen and (max-width: 1300px) {
