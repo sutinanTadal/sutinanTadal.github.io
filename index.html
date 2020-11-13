@@ -7,9 +7,7 @@
 </head>
 
 <body>
-	<span onclick="openNav()">open</span>
-	<div class="sideNav" id="mySideNav">
-		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+	<div id="navbar">
 		<a href="#home">Profile</a>
  		<a href="#services">Education</a>
 		<a href="#clients">Activities</a>
@@ -26,12 +24,15 @@
 	
 
 <script>
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-}
-
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
+var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+var currentScrollPos = window.pageYOffset;
+  if (prevScrollpos > currentScrollPos) {
+    document.getElementById("navbar").style.top = "0";
+  } else {
+    document.getElementById("navbar").style.top = "-50px";
+  }
+  prevScrollpos = currentScrollPos;
 }
 </script>
 </body>
