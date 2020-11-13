@@ -3,7 +3,9 @@
 body {
   margin: 0;
   font-family: "Lato", sans-serif;
+  padding-left: 150px;
   background-color: whitesmoke;
+  font-size: 15px;
 }
 
 .main {
@@ -16,15 +18,16 @@ body {
 	margin-left: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	background-color: lightgrey;
 	text-align: justify;
 	text-justify: inter-word;
 }
 
 .header{
-  background-color: #f1f1f1;
+  background-color: #111;
   padding: 30px;
   text-align: center;
+  display: block;
+  color: #f1f1f1;
 }
 
 .sticky {
@@ -37,7 +40,7 @@ body {
   padding-top: 60px;
 }
 
-#navbar {
+/*#navbar {
   overflow: hidden;
   background-color: #333;
 }
@@ -60,4 +63,38 @@ body {
 #navbar a.active {
   background-color: #4CAF50;
   color: white;
+}*/
+
+.sidenav {
+  height: 100%;
+  width: 150px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+@media screen and (max-width: 1300px) {
+  .sidenav {padding-top: 15px;
+			width: 100px}
+  .sidenav a {font-size: 12px;}
+	body {
+		padding-left: 100px;
+		font-size: 12px;
+		 }
 }
