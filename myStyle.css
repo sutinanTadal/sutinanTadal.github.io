@@ -16,7 +16,7 @@ body {
 }
 
 .mainContent {
-	margin: 5px;
+	margin: 0px;
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -58,7 +58,7 @@ body {
 }
 
 .noNav{
-	padding: 5% 15% 5% 15%;
+	padding:5%;
 	margin-left: 5%;
 	margin-right: 5%;
 }
