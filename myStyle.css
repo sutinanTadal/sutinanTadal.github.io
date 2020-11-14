@@ -34,6 +34,8 @@ body {
   padding-left: 5%;
   padding-right: 5%;
   font-size: 2vw;
+font-family: 'Quicksand', sans-serif;
+
 }
 
 .header{
@@ -109,6 +111,7 @@ body {
 .title{
   font-size: 4vw;
   text-align: center;
+  font-family: 'Anton', sans-serif;
 }
 
 #tProfile{
