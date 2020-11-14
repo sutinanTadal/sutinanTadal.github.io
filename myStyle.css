@@ -98,14 +98,14 @@ body {
 }
 
 .title{
-  font-size: 50%%;
+  font-size: 50%;
   text-align: center;
 }
+
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
 }
-</s
 
 /*
 #navbar {
@@ -135,12 +135,4 @@ body {
 }
 */
 
-@media screen and (max-height: 1300px) {
-	.header{
-		padding-top: 15%;
-	}
-	.sticky{
-		padding-top: 5%;
-		padding-bottom: 5%;
-	}
-}
+@media screen and (max-height: 1300px) {}
