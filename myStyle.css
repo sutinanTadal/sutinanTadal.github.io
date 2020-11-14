@@ -9,10 +9,9 @@ body {
 }
 
 .proPic{
-	max-width: 90%;
+	max-width: 70%;
 	height: auto;
-	float: left;
-	padding-right: 10%;
+	float: center;
 }
 
 .main {
@@ -69,8 +68,8 @@ body {
 
 .noNav{
 	padding:5%;
-	margin-left: 5%;
-	margin-right: 5%;
+	margin-left: 10%;
+	margin-right: 10%;
 }
 
 .sidenav {
