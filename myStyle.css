@@ -23,9 +23,7 @@ body {
 
 .mainContent {
 	margin: 8px;
-	padding-top: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding: 10px 10px 10px 10px ;
 	padding-bottom: 20px;
 	text-align: justify;
 	text-justify: inter-word;
