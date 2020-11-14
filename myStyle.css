@@ -20,7 +20,7 @@ body {
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 	text-align: justify;
 	text-justify: inter-word;
 	background-color: #454545;
@@ -30,6 +30,7 @@ body {
 .content{
   padding-left: 5%;
   padding-right: 5%;
+  fon-size: 3.5vw;
 }
 
 .header{
