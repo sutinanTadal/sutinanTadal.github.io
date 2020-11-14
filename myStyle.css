@@ -41,6 +41,8 @@ body {
 
 .header{
   padding-top: 60px;
+  padding-right:5%;
+  padding-left:5%;
   text-align: left;
   display: block;
   color: #A4A4A4;
