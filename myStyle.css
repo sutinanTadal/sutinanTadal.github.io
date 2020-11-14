@@ -9,7 +9,7 @@ body {
 }
 
 .proPic{
-	max-width: 30%;
+	max-width: 70%;
 	height: auto;
 	float: left;
 	padding-right: 10%;
@@ -113,6 +113,9 @@ body {
   text-align: center;
 }
 
+#tProfile{
+	
+}
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
