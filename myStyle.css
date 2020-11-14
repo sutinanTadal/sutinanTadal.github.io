@@ -8,6 +8,11 @@ body {
   color: #000000;
 }
 
+footer {
+  font-size: 10px;
+  text-align: right;
+}
+
 .proPic{
 	max-width: 85%;
 	height: auto;
