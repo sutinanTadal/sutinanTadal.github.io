@@ -16,7 +16,7 @@ body {
 }
 
 .mainContent {
-	margin-bottom: 10px;
+	margin: 8px;
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -26,6 +26,7 @@ body {
 	background-color: #454545;
 	color: #A4A4A4;
 	float: left;
+	height: 40%;
 }
 
 .content{
