@@ -25,14 +25,13 @@ body {
 	text-justify: inter-word;
 	background-color: #454545;
 	color: #A4A4A4;
-	float: left;
 	height: 40%;
 }
 
 .content{
   padding-left: 5%;
   padding-right: 5%;
-  fon-size: 3.5vw;
+  font-size: 4vw;
 }
 
 .header{
@@ -40,8 +39,8 @@ body {
   margin: 0px;
   text-align: left;
   display: block;
-  color: #5B5B5B;
-  font-size: 4vw;
+  color: #A4A4A4;
+  font-size: 5vw;
 }
 
 .sticky {
