@@ -32,6 +32,7 @@ footer {
 	text-justify: inter-word;
 	background-color: #454545;
 	color: #A4A4A4;
+	border-radius: 5px;
 }
 
 .content{
@@ -117,6 +118,10 @@ footer {
   font-family: 'Anton', sans-serif;
 }
 
+.menuBar{
+  font-size: 50px;
+}
+
 #tProfile{
 	border-collapse: collapse;
 	width: 100%;
@@ -160,5 +165,11 @@ footer {
 	}
 	.noNav{
 		font-size: 3vw;
+	}
+	.menuBar{
+		font-sixe: 4vw;
+	}
+	span{
+		font-size: 4vw;
 	}
 }
