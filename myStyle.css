@@ -12,6 +12,7 @@ body {
 	max-width: 30%;
 	height: auto;
 	float: left;
+	padding-right: 10%;
 }
 
 .main {
@@ -30,9 +31,6 @@ body {
 	text-justify: inter-word;
 	background-color: #454545;
 	color: #A4A4A4;
-	float: left;
-	max-width: auto;
-	max-height: 100%;
 }
 
 .content{
