@@ -8,6 +8,11 @@ body {
   color: #000000;
 }
 
+.proPic{
+	width: 30%;
+	height: 30%;
+	float: left;
+}
 
 .main {
 	margin-top: 70px;
