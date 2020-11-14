@@ -3,9 +3,9 @@
 body {
   margin: 0;
   font-family: "Lato", sans-serif;
-  background-color: whitesmoke;
+  background-color: #323232;
   font-size: 15px;
-  color: #454545;
+  color: #000000;
 }
 
 
@@ -16,15 +16,15 @@ body {
 }
 
 .mainContent {
-	margin: 0px;
+	margin-bottom: 10px;
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 10px;
 	text-align: justify;
 	text-justify: inter-word;
-	background-color: #C3C3C3;
-	color: #454545;
+	background-color: #454545;
+	color: #A4A4A4;
 }
 
 .content{
@@ -37,7 +37,7 @@ body {
   margin: 0px;
   text-align: left;
   display: block;
-  color: #454545;
+  color: #5B5B5B;
   font-size: 4vw;
 }
 
