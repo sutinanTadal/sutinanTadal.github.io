@@ -155,4 +155,11 @@ footer {
 }
 */
 
-@media screen and (max-height: 1300px) {}
+@media screen and (max-height: 1300px) {
+	.sticky{
+		height: 10%;
+	}
+	.noNav{
+		font-size: 3vw;
+	}
+}
