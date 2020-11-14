@@ -161,15 +161,9 @@ footer {
 
 @media screen and (max-width: 1300px) {
 	.sticky{
-		height: 10%;
+		height: 8%;
 	}
 	.noNav{
 		font-size: 3vw;
-	}
-	.menuBar{
-		font-sixe: 4vw;
-	}
-	span{
-		font-size: 4vw;
 	}
 }
