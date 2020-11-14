@@ -97,6 +97,10 @@ body {
   margin-left: 50px;
 }
 
+.title{
+  font-size: 50%%;
+  text-align: center;
+}
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
