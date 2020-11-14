@@ -31,11 +31,11 @@ body {
 .content{
   padding-left: 5%;
   padding-right: 5%;
-  font-size: 4vw;
+  font-size: 3vw;
 }
 
 .header{
-  padding-top: 60px;
+  padding-top: 60px
   margin: 0px;
   text-align: left;
   display: block;
