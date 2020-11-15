@@ -9,7 +9,10 @@ body {
 }
 
 
-a:link, a:visited {
+footer {
+  text-align: left;
+}
+.button:link, .button:visited {
   background-color: #454545;
   color: #A4A4A4;
   padding: 10px;
@@ -18,15 +21,9 @@ a:link, a:visited {
   display: inline-block;
   border-radius: 4px;
 }
-
-a:hover, a:active {
-  background-color: #555;
+.button:hover{
+   background-color: #555;
 }
-
-footer {
-  text-align: left;
-}
-
 .proPic{
 	max-width: 60%;
 	height: auto;
