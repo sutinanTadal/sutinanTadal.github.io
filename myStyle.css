@@ -50,7 +50,7 @@ footer {
   margin: 0px;
   text-align: left;
   display: block;
-  color: #626262;
+  color: white;
   font-size: 4vw;
   font-family: 'Anton', sans-serif;
   background-image: url("pic/DSC_2545.jpg");
@@ -58,7 +58,7 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   height: 50%;
-}
+	
 }
 
 .sticky {
