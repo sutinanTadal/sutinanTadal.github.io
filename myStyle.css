@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: "Lato", sans-serif;
-  background-color: #323232;
+  background-color: #2F2F2F;
   font-size: 15px;
   color: #000000;
 }
@@ -65,7 +65,7 @@ footer {
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #454545;
+  background-color: #2f2f2f;
   color: #ADADAD;
   padding-left: 5%;
 }
@@ -76,7 +76,7 @@ footer {
 
 .subScript {
   font-size: 2vw;
-  color: #818181;
+  color: whitesmoke;
   margin: 0;
   padding: 0px;
 }
@@ -144,7 +144,7 @@ footer {
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background-color: #323232; /* Set a background color */
+  background-color: #454545; /* Set a background color */
   color: #A4A4A4; /* Text color */
   cursor: pointer; /* Add a mouse pointer on hover */
   padding: 15px; /* Some padding */
