@@ -59,6 +59,7 @@ footer {
   background-color: #454545;
   color: #ADADAD;
   padding-left: 5%;
+  height: auto;
 }
 
 .sticky + .content {
