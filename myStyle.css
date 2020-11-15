@@ -62,10 +62,10 @@ footer {
   margin: 0px;
   text-align: left;
   display: block;
-  color: white;
+  color: #454545;
   font-size: 4vw;
   font-family: 'Anton', sans-serif;
-  background-image: url("pic/DSC_2545.jpg");
+  background-image: url("pic/bg.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
