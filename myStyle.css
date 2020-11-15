@@ -13,9 +13,10 @@ footer {
 }
 
 .proPic{
-	max-width: 85%;
+	max-width: 70%;
 	height: auto;
-	float: center;
+	text-align: center;
+	padding: 40px;
 }
 
 .main {
@@ -43,13 +44,21 @@ footer {
 }
 
 .header{
-  padding-top: 60px;
+  padding-top: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
   margin: 0px;
   text-align: left;
   display: block;
   color: #626262;
   font-size: 4vw;
   font-family: 'Anton', sans-serif;
+  background-image: url("pic/DSC_2545.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50%;
+}
 }
 
 .sticky {
@@ -135,12 +144,13 @@ footer {
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background-color: red; /* Set a background color */
-  color: white; /* Text color */
+  background-color: #323232; /* Set a background color */
+  color: #A4A4A4; /* Text color */
   cursor: pointer; /* Add a mouse pointer on hover */
   padding: 15px; /* Some padding */
-  border-radius: 10px; /* Rounded corners */
-  font-size: 18px; /* Increase font size */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 15px; /* Increase font size */
+  font-family: 'Assistant', sans-serif;
 }
 
 #myBtn:hover {
