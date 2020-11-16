@@ -60,7 +60,7 @@ footer {
 	text-align: justify;
 	text-justify: inter-word;
 	background-color: #313131;
-	color: #A3A3A3;
+	color: white;
 	border-radius: 5px;
 	box-shadow: 8px 10px #222629;
 }
@@ -97,8 +97,6 @@ footer {
   background-color: #2f2f2f;
   color: #ADADAD;
   padding-left: 5%;
-  padding-top: 1px;
-  padding-bottom: 1px;
 }
 
 .sticky + .content {
@@ -107,7 +105,7 @@ footer {
 
 .subScript {
   font-size: 2vw;
-  color: #313131;
+  color: #474b4f;
   margin: 0px;
   padding-bottom: 20px;
   
@@ -131,7 +129,6 @@ footer {
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 60px;
-  font-family: 'Mallanna', sans-serif;
 }
 
 .sidenav a {
@@ -140,7 +137,7 @@ footer {
   font-size: 25px;
   color: #818181;
   display: block;
-  transition: 0.3s;
+  transition: 0.1s;
 }
 
 .sidenav a:hover {
@@ -180,7 +177,7 @@ footer {
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background-color: #1f1f1f; /* Set a background color */
+  background-color: #2f2f2f; /* Set a background color */
   color: #A4A4A4; /* Text color */
   cursor: pointer; /* Add a mouse pointer on hover */
   padding: 15px; /* Some padding */
