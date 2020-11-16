@@ -41,7 +41,8 @@ footer {
   margin: 2px;
 }
 .button:hover{
-   background-color: #61892f;
+   background-color: #86c232;
+   color: #222629;
 }
 .proPic{
 	max-width: 60%;
@@ -79,7 +80,7 @@ footer {
   padding-top: 50px;
   padding-left: 20px;
   padding-right: 20px;
-  margin: 0px;
+  margin-top: 3%;
   text-align: left;
   display: block;
   color: #323232;
@@ -90,6 +91,7 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   height: 60%;
+  border-style:;
 	
 }
 
@@ -175,7 +177,9 @@ footer {
 
 #tProfile{
 	border-collapse: collapse;
+	border: none;
 	width: 100%;
+	margin: 0px ;
 }
 
 #myBtn {
@@ -196,6 +200,7 @@ footer {
 }
 
 #myBtn:hover {
+  color: white;
   background-color: #555; /* Add a dark-grey background on hover */
 }
 
