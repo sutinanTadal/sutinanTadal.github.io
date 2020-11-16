@@ -26,9 +26,8 @@ strong{
 
 footer {
   text-align: left;
-  height: 100%;
   background-color: #222629;
-  padding:5%;
+  padding: 5%;
 }
 
 .button:link, .button:visited {
