@@ -17,6 +17,7 @@ hr{
 
 h1{
   font-family: 'Anton', sans-serif;
+  text-shadow: 1px 3px #6B6E70;
 }
 
 strong{
@@ -25,6 +26,7 @@ strong{
 
 footer {
   text-align: left;
+  height: 100%;
 }
 .button:link, .button:visited {
   background-color: #454545;
