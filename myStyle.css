@@ -10,8 +10,9 @@ body {
 
 hr{
   width: 30%;
-  text-align: right;
+  text-align: center;
   color: #86c232;
+  padding-top: 0px;
 }
 
 h1{
@@ -62,7 +63,7 @@ footer {
   padding-left: 5%;
   padding-right: 5%;
   font-size: 2vw;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Mallanna', sans-serif;
 }
 
 .header{
@@ -101,6 +102,7 @@ footer {
   color: #313131;
   margin: 0;
   padding: 0px;
+  font-family: 'Mallanna', sans-serif;
 }
 
 .noNav{
@@ -148,6 +150,7 @@ footer {
   text-align: center;
   font-family: 'Kadwa', serif;
   color: #86c232;
+  font-family: 'Anton', sans-serif;
 }
 
 .menuBar{
