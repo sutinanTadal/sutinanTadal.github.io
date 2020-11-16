@@ -97,8 +97,8 @@ footer {
   background-color: #2f2f2f;
   color: #ADADAD;
   padding-left: 5%;
-  padding-top: 1%;
-  padding-bottom: 1%;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 
 .sticky + .content {
