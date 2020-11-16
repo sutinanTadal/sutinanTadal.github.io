@@ -8,6 +8,12 @@ body {
   color: #000000;
 }
 
+hr{
+  width: 30%;
+  text-align: right;
+  color: #86c232;
+}
+
 h1{
   font-family: 'Anton', sans-serif;
 }
