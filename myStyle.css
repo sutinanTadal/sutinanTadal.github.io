@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: "Lato", sans-serif;
-  background-color: #454545;
+  background-color: #474b4f;
   font-size: 15px;
   color: #000000;
 }
@@ -47,7 +47,7 @@ footer {
 	text-align: justify;
 	text-justify: inter-word;
 	background-color: #313131;
-	color: #848484;
+	color: white;
 	border-radius: 5px;
 	box-shadow: 10px 10px #111;
 }
@@ -141,6 +141,7 @@ footer {
   font-size: 4vw;
   text-align: center;
   font-family: 'Big Shoulders Display', cursive;
+  color: #86c232;
 }
 
 .menuBar{
