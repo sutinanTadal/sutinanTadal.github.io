@@ -47,22 +47,20 @@ footer {
 	margin-bottom: 4%;
 }
 
-#skills{
+.skillsClass{
 	color: white;
 	background-color: #222629;
 	padding: 4%;
 	margin-top: 4%;
 	margin-bottom: 4%;
-	height: 40%;
 }
 
-#edu{
+.eduClass{
 	color: white;
 	background-color: #222629;
 	padding: 4%;
 	margin-top: 4%;
 	margin-bottom: 4%;
-	height: 40%;
 }
 
 .button:link, .button:visited {
@@ -119,7 +117,7 @@ footer {
   text-align: left;
   display: block;
   color: #323232;
-  font-size: 4vw;
+  font-size: 4.5vw;
   background-image: url("pic/bbg2.JPEG");
   box-shadow: 10px 0px;
   background-position: center;
@@ -147,8 +145,7 @@ footer {
   font-size: 2vw;
   color: #474b4f;
   margin: 0px;
-  padding-bottom: 20px;
-  
+  padding-bottom: 1vw;
   font-family: 'Mallanna', sans-serif;
 }
 
@@ -198,7 +195,7 @@ footer {
 }
 
 .title{
-  font-size: 4vw;
+  font-size: 5vw;
   text-align: center;
   font-family: 'Kadwa', serif;
   color: #86c232;
