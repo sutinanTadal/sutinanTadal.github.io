@@ -195,7 +195,6 @@ footer {
 .title{
   font-size: 5vw;
   text-align: center;
-  font-family: 'Kadwa', serif;
   color: #86c232;
   font-family: 'Anton', sans-serif;
 }
@@ -209,6 +208,11 @@ footer {
 	border: none;
 	width: 100%;
 	margin: 0px ;
+}
+
+#skillTable{
+	text-align: center;
+	width: 100%;
 }
 
 #myBtn {
