@@ -20,14 +20,14 @@ h1{
   text-shadow: 1px 3px #6B6E70;
 }
 
-strong{
-  color: #86c232;
-}
+
+
 
 footer {
   text-align: left;
   background-color: #222629;
   padding: 5%;
+  color: #6b6e70;
 }
 
 .activities, .contact{
@@ -39,6 +39,9 @@ footer {
 	
 }
 
+.greenB{
+	color: #86c232;
+}
 .project{
 	color:white;
 	background-color: #222629;
@@ -64,8 +67,8 @@ footer {
 }
 
 .button:link, .button:visited {
-  background-color: #454545;
-  color: #A4A4A4;
+  background-color: #474b4f;
+  color: #6b6e70;
   padding: 10px;
   text-align: center;
   text-decoration: none;
