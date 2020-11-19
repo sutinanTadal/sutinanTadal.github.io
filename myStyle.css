@@ -326,7 +326,8 @@ footer {
 		font-size: 3vw;
 	}
 	.proPic{
-		max-width: 50%;
+		width: 700px;
+		height: auto;
 	}
 	
 	#name{
