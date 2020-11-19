@@ -108,6 +108,7 @@ footer {
    color: #222629;
 }
 .proPic{
+	max-width: 100%;
 	height: auto;
 	text-align: right;
 	padding-top: 5%;
@@ -150,7 +151,6 @@ footer {
   color: #323232;
   font-size: 4.5vw;
   background-image: url("pic/bbg2.JPEG");
-  box-shadow: 10px 0px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
