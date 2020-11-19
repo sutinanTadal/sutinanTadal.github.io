@@ -8,11 +8,6 @@ body {
   color: #000000;
 }
 
-span{
-	font-size: 40px;
-	cursor:pointer; 
-	color: white;
-}
 
 hr{
   width: 30%;
@@ -38,7 +33,7 @@ footer {
 }
 
 .activities {
-	color:white;
+	color: white;
 	background-color: #222629;
 	padding-top: 4%;
 	padding-bottom: 4%;
