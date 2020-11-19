@@ -109,7 +109,7 @@ footer {
 .proPic{
 	max-width: 80%;
 	height: auto;
-	text-align: center;
+	text-align: right;
 	padding: 5%;
 }
 
@@ -322,6 +322,11 @@ footer {
 	}
 	.proPic{
 		max-width: 50%;
+	}
+	#name{
+		padding: 0px;
+		margin: 0px;
+		text-align: left;
 	}
 
 }
