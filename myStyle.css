@@ -29,7 +29,8 @@ footer {
   text-align: left;
   background-color: #222629;
   padding: 5%;
-  color: #6b6e70;
+  color: #C0C0C0;
+  font-size: 15px;
 }
 
 .activities {
@@ -76,7 +77,7 @@ footer {
 
 .button:link, .button:visited {
   background-color: #474b4f;
-  color: #6b6e70;
+  color: #C0C0C0;
   padding: 10px;
   text-align: center;
   text-decoration: none;
@@ -134,7 +135,6 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   height: 70%;
-  width: 100%;
 	
 }
 
