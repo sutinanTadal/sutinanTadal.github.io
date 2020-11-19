@@ -8,11 +8,6 @@ body {
   color: #000000;
 }
 
-body, html{
-	padding: 0px;
-	margin: 0px;
-}
-
 hr{
   width: 30%;
   text-align: center;
@@ -36,7 +31,10 @@ footer {
 .activities {
 	color:white;
 	background-color: #222629;
-	padding: 4%; 
+	padding-top: 4%;
+	padding-bottom: 4%;
+	padding-left: 10%;
+	padding-right:10%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 	
@@ -47,7 +45,10 @@ footer {
 	font-family: 'Sora', sans-serif;
 	color: white;
 	background-color: #222629;
-	padding: 4%;
+	padding-top: 4%;
+	padding-bottom: 4%;
+	padding-left: 10%;
+	padding-right:10%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 }
@@ -58,7 +59,10 @@ footer {
 .project{
 	color:white;
 	background-color: #222629;
-	padding: 4%; 
+	padding-top: 4%;
+	padding-bottom: 4%;
+	padding-left: 10%;
+	padding-right:10%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 }
@@ -66,7 +70,10 @@ footer {
 .skillsClass{
 	color: white;
 	background-color: #222629;
-	padding: 4%;
+	padding-top: 4%;
+	padding-bottom: 4%;
+	padding-left: 10%;
+	padding-right:10%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 }
@@ -74,7 +81,10 @@ footer {
 .eduClass{
 	color: white;
 	background-color: #222629;
-	padding: 4%;
+	padding-top: 4%;
+	padding-bottom: 4%;
+	padding-left: 10%;
+	padding-right:10%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 }
