@@ -238,9 +238,12 @@ footer {
 
 #tProfile{
 	border-collapse: collapse;
-	border: none;
+	border: 0px;
 	width: 100%;
-	margin: 0px ;
+	margin-top: 5%;
+	margin-bottom: 5%;
+	margin-left: 10%;
+	margin-right: 10%;
 }
 
 #skillTable{
