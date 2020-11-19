@@ -304,6 +304,7 @@ footer {
 @media only screen and (max-width: 1300px) {
 	.sticky{
 		height: 11%;
+		font-size: 15px;
 	}
 	.noNav{
 		font-size: 3vw;
