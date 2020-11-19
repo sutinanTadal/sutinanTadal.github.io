@@ -11,7 +11,6 @@ body {
 body, html{
 	padding: 0px;
 	margin: 0px;
-	width: 100%;
 }
 
 hr{
@@ -46,23 +45,6 @@ footer {
 	padding: 5%; 
 	margin-top: 4%;
 	font-size: 10px;
-}
-
-#footerLeft {
-	width: 47%; 
-	float: left; 
-	display: block;
-}
-#footerRight {
-	width: 47%; 
-	float: right; 
-	display: block; 
-	height: 50px; 
-}
-#footer {
-	width: 100%; 
-	height: 100%;
-	max-width: 980px; 
 }
 
 .greenB{
@@ -152,6 +134,7 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   height: 70%;
+  width: 100%;
 	
 }
 
