@@ -229,6 +229,8 @@ footer {
 #skillTable{
 	text-align: center;
 	width: 100%;
+	border: none;
+	margin: 0px;
 }
 
 #myBtn {
