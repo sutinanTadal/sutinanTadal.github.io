@@ -23,9 +23,12 @@ h1{
 footer {
   text-align: left;
   background-color: #222629;
-  padding: 5%;
   color: #C0C0C0;
   font-size: 15px;
+  padding-top: 4%;
+  padding-bottom: 4%;
+  padding-left: 10%;
+  padding-right:10%;
 }
 
 .activities {
@@ -47,8 +50,8 @@ footer {
 	background-color: #222629;
 	padding-top: 4%;
 	padding-bottom: 4%;
-	padding-left: 10%;
-	padding-right:10%;
+	padding-left: 15%;
+	padding-right:15%;
 	margin-top: 4%;
 	margin-bottom: 4%;
 }
@@ -313,5 +316,11 @@ footer {
 	}
 	.highlight{
 		font-size: 19px;
+	}
+	.header{
+		font-size: 3vw;
+	}
+	.proPic{
+		max-width: 50%;
 	}
 }
