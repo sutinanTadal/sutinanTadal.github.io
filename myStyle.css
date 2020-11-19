@@ -57,7 +57,6 @@ footer {
 	width: 47%; 
 	float: right; 
 	display: block; 
-	height: 50px; 
 }
 #footer {
 	width: 100%; 
@@ -152,7 +151,6 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   height: 70%;
-  width: 100%;
 	
 }
 
