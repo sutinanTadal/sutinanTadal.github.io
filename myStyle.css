@@ -312,10 +312,13 @@ footer {
 
 @media only screen and (max-width: 1300px) {
 	span{
-		font-size: 15px;
+		font-size: 20px;
 	}
 	.noNav{
 		font-size: 3vw;
+	}
+	.proPic{
+		width: 100%;
 	}
 }
 
