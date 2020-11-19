@@ -309,6 +309,9 @@ footer {
 
 @media only screen and (min-width: 1500px) {
 	.content{
-		font-size: 30px;
+		font-size: 19px;
+	}
+	.highlight{
+		font-size: 19px;
 	}
 }
