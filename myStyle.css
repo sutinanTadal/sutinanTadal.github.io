@@ -302,8 +302,7 @@ footer {
 */
 
 @media only screen and (max-width: 1300px) {
-	.sticky{
-		height: 11%;
+	span{
 		font-size: 15px;
 	}
 	.noNav{
@@ -312,8 +311,8 @@ footer {
 }
 
 @media only screen and (min-width: 1500px) {
-	span{
-		font-size: 19px;
+	.content{
+		font-size: 20px;
 	}
 	.highlight{
 		font-size: 19px;
@@ -324,4 +323,5 @@ footer {
 	.proPic{
 		max-width: 50%;
 	}
+
 }
