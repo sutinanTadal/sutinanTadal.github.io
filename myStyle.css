@@ -22,7 +22,6 @@ hr{
 
 h1{
   font-family: 'Anton', sans-serif;
-  text-shadow: 1px 3px #6B6E70;
 }
 
 footer {
@@ -141,7 +140,7 @@ footer {
 .content{
   padding-left: 5%;
   padding-right: 5%;
-  font-size: auto;
+  font-size: 1rem;
   font-family: 'Sora', sans-serif;
 }
 
