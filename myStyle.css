@@ -18,7 +18,7 @@ hr{
   text-align: center;
   color: #86c232;
   padding-top: 0px;
-  margin-bottom: 2rem;
+  margin-bottom: 3.5rem;
 }
 
 h1{
@@ -64,6 +64,7 @@ footer {
 .greenB{
 	color: #86c232;
 }
+
 .project{
 	color:white;
 	background-color: #222629;
@@ -136,6 +137,10 @@ footer {
 	color: white;
 	border-radius: 5px;
 	box-shadow: 8px 10px #222629;
+}
+
+.margin-b{
+	margin-bottom: 3.5rem;
 }
 
 .content{
