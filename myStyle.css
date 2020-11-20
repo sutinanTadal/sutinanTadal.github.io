@@ -31,7 +31,7 @@ footer {
   padding-top: 4%;
   padding-bottom: 4%;
   padding-left: 15%;
-  padding-right:15%;
+  padding-right: 15%;
 }
 
 .activities {
@@ -47,7 +47,7 @@ footer {
 }
 
 .highlight{
-	font-size: 1em;
+	font-size: 1rem;
 	color: white;
 	background-color: #222629;
 	padding-top: 4%;
@@ -143,7 +143,7 @@ footer {
 .content{
   padding-left: 5%;
   padding-right: 5%;
-  font-size: 1em;
+  font-size: 1rem;
 }
 
 .container {
