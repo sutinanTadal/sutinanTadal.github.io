@@ -144,6 +144,16 @@ footer {
   font-family: 'Sora', sans-serif;
 }
 
+.container {
+    display: flex; /* or inline-flex */
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.container div {
+    padding: 1rem;
+}
+
 .header{
   padding-top: 4%;
   padding-left: 8%;
