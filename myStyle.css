@@ -48,7 +48,7 @@ footer {
 }
 
 .highlight{
-	font-size: auto;
+	font-size: 1em;
 	font-family: 'Sora', sans-serif;
 	color: white;
 	background-color: #222629;
@@ -140,7 +140,7 @@ footer {
 .content{
   padding-left: 5%;
   padding-right: 5%;
-  font-size: 1rem;
+  font-size: 1em;
   font-family: 'Sora', sans-serif;
 }
 
@@ -170,14 +170,6 @@ footer {
 
 .sticky + .content {
   padding-top: 60px;
-}
-
-.subScript {
-  font-size: 1vw;
-  color: #474b4f;
-  margin: 0px;
-  padding-bottom: 20px;
-  font-family: 'Mallanna', sans-serif;
 }
 
 .noNav{
