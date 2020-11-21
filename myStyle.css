@@ -95,6 +95,22 @@ footer {
 	margin-bottom: 4%;
 }
 
+.gitbutton:link, .gitbutton:visited {
+  background-color: #474b4f;
+  color: #C0C0C0;
+  padding: 0.3rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+  margin: 2px;
+  transition: 0.4s;
+}
+.gitbutton:hover{
+   background-color: #86c232;
+   color: #222629;
+}
+
 .button:link, .button:visited {
   background-color: #474b4f;
   color: #C0C0C0;
@@ -104,11 +120,13 @@ footer {
   display: inline-block;
   border-radius: 4px;
   margin: 2px;
+  transition: 0.4s;
 }
 .button:hover{
    background-color: #86c232;
    color: #222629;
 }
+
 .proPic{
 	max-width: 100%;
 	height: auto;
@@ -199,7 +217,7 @@ footer {
   left: 0;
   background-color: #1F1F1F;
   overflow-x: hidden;
-  transition: 0.5s;
+  transition: 0.4s;
   padding-top: 60px;
 }
 
@@ -209,7 +227,7 @@ footer {
   font-size: 25px;
   color: #818181;
   display: block;
-  transition: 0.1s;
+  transition: 0.4s;
 }
 
 .sidenav a:hover {
@@ -271,6 +289,7 @@ footer {
   padding: 15px; /* Some padding */
   border-radius: 5px; /* Rounded corners */
   font-size: 15px; /* Increase font size */
+  transition: 0.4s;
 }
 
 #myBtn:hover {
