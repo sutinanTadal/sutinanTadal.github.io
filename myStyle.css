@@ -336,6 +336,7 @@ footer {
   -o-animation: fadeIn ease 2s;
   -ms-animation: fadeIn ease 2s;
 }
+
 @keyframes fadeIn {
   0% {
     opacity:0;
