@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microgames</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <a class="nav-logo" onclick="showHome()">
+    <div class="logo-icon">🎮</div>
+    Microgames
+  </a>
+  <div class="nav-divider"></div>
+  <div id="nav-game-buttons"></div>
+  <div class="nav-spacer"></div>
+  <button class="nav-home-btn" onclick="showHome()">Home</button>
+</nav>
+
+<!-- Content -->
+<div id="content">
+  <!-- Home screen -->
+  <div id="home" class="fade">
+    <div class="home-hero">
+      <h1>Microgames</h1>
+      <p>A collection of mini-games to play in your browser. Pick a game below to get started.</p>
+    </div>
+    <div class="games-grid" id="games-grid"></div>
+  </div>
+
+  <!-- Game iframe view -->
+  <div id="game-view">
+    <iframe id="game-frame" src="" title="Game"></iframe>
+  </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
