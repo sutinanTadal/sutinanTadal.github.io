@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OX Game — Liquid Glass</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Cell size: fills available width on small screens, caps at 100px on large */
+      --cell: clamp(64px, calc((100vw - 132px) / 3), 100px);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      padding: 24px 16px;
+    }
+
+    /* ─── Orbs ─────────────────────────────────────────────────── */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      opacity: 0.55; animation: floatOrb linear infinite;
+      pointer-events: none; z-index: 0;
+    }
+    .orb1 { width:420px;height:420px;background:radial-gradient(circle,#a855f7,#6366f1);top:-120px;left:-100px;animation-duration:18s; }
+    .orb2 { width:360px;height:360px;background:radial-gradient(circle,#06b6d4,#3b82f6);bottom:-100px;right:-80px;animation-duration:22s;animation-delay:-8s; }
+    .orb3 { width:280px;height:280px;background:radial-gradient(circle,#f472b6,#ec4899);top:40%;left:60%;animation-duration:26s;animation-delay:-14s; }
+
+    @keyframes floatOrb {
+      0%   { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(40px,60px) scale(1.08); }
+      50%  { transform: translate(-30px,30px) scale(0.95); }
+      75%  { transform: translate(60px,-40px) scale(1.05); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+
+    /* ─── Container ─────────────────────────────────────────────── */
+    .container {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; gap: clamp(12px, 3vw, 20px);
+      width: 100%;
+    }
+
+    /* ─── Title ─────────────────────────────────────────────────── */
+    .title {
+      font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 700;
+      letter-spacing: 0.12em; color: rgba(255,255,255,0.92);
+      text-shadow: 0 0 30px rgba(168,85,247,0.6), 0 2px 8px rgba(0,0,0,0.4);
+      animation: titlePulse 4s ease-in-out infinite;
+    }
+    @keyframes titlePulse {
+      0%,100% { text-shadow: 0 0 30px rgba(168,85,247,0.6), 0 2px 8px rgba(0,0,0,0.4); }
+      50%     { text-shadow: 0 0 50px rgba(99,102,241,0.9), 0 2px 8px rgba(0,0,0,0.4); }
+    }
+
+    /* ─── Mode Toggle ───────────────────────────────────────────── */
+    .mode-toggle {
+      display: flex; gap: 0;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 50px;
+      padding: 5px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .mode-btn {
+      padding: 9px clamp(12px, 4vw, 24px); border-radius: 50px; border: none;
+      background: transparent; color: rgba(255,255,255,0.5);
+      font-size: 0.88rem; font-weight: 600; letter-spacing: 0.05em;
+      cursor: pointer; transition: all 0.3s ease; white-space: nowrap;
+    }
+    .mode-btn.active {
+      background: rgba(168,85,247,0.35);
+      color: rgba(255,255,255,0.95);
+      box-shadow: 0 2px 12px rgba(168,85,247,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    /* ─── Difficulty Selector ───────────────────────────────────── */
+    .difficulty-row {
+      display: flex; gap: 10px;
+      animation: fadeSlideIn 0.35s ease forwards;
+    }
+    .difficulty-row.hidden { display: none; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .diff-btn {
+      padding: 7px 20px; border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em;
+      cursor: pointer; transition: all 0.25s ease;
+    }
+    .diff-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.1); }
+    .diff-btn.active { color: #fff; border-color: transparent; }
+    .diff-btn.easy.active  { background: rgba(110,231,183,0.25); border-color: rgba(110,231,183,0.4); box-shadow: 0 0 14px rgba(110,231,183,0.3); }
+    .diff-btn.medium.active{ background: rgba(251,191,36,0.22);  border-color: rgba(251,191,36,0.4);  box-shadow: 0 0 14px rgba(251,191,36,0.3); }
+    .diff-btn.hard.active  { background: rgba(248,113,113,0.22); border-color: rgba(248,113,113,0.4); box-shadow: 0 0 14px rgba(248,113,113,0.3); }
+
+    /* ─── Status Badge ──────────────────────────────────────────── */
+    .status {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 50px; padding: 10px 28px;
+      font-size: 1.05rem; font-weight: 500;
+      color: rgba(255,255,255,0.85); letter-spacing: 0.04em;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+      transition: all 0.4s ease; min-width: 220px; text-align: center;
+    }
+    .status.win  { border-color: rgba(168,85,247,0.6); box-shadow: 0 0 30px rgba(168,85,247,0.4), inset 0 1px 0 rgba(255,255,255,0.12); }
+    .status.draw { border-color: rgba(251,191,36,0.6); box-shadow: 0 0 30px rgba(251,191,36,0.35), inset 0 1px 0 rgba(255,255,255,0.12); }
+
+    /* Thinking dots */
+    .thinking-dots span {
+      display: inline-block;
+      animation: dotBounce 1.2s ease-in-out infinite;
+      font-size: 1.4rem; line-height: 0; vertical-align: middle;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%,80%,100% { transform: translateY(0); opacity: 0.4; }
+      40%         { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ─── Scoreboard ────────────────────────────────────────────── */
+    .scoreboard { display: flex; gap: clamp(10px, 3vw, 18px); }
+    .score-card {
+      background: rgba(255,255,255,0.07); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.14); border-radius: 20px;
+      padding: clamp(10px, 3vw, 14px) clamp(14px, 4vw, 28px); text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: transform 0.3s ease;
+    }
+    .score-card:hover { transform: translateY(-3px); }
+    .score-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+    .score-value { font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 700; color: rgba(255,255,255,0.9); line-height: 1; }
+    .score-card.x-card .score-value { color: #a78bfa; }
+    .score-card.o-card .score-value { color: #67e8f9; }
+
+    /* ─── Board ─────────────────────────────────────────────────── */
+    .board {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: clamp(8px, 2.5vw, 14px); padding: clamp(16px, 5vw, 28px);
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(40px) saturate(2);
+      -webkit-backdrop-filter: blur(40px) saturate(2);
+      border: 1px solid rgba(255,255,255,0.16); border-radius: 32px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .board.bot-thinking { pointer-events: none; }
+    .board.game-over::after {
+      content: ''; position: absolute; inset: 0; border-radius: 32px;
+      pointer-events: none;
+      animation: winGlow 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes winGlow {
+      from { box-shadow: inset 0 0 40px rgba(168,85,247,0.15); }
+      to   { box-shadow: inset 0 0 80px rgba(99,102,241,0.35); }
+    }
+
+    /* ─── Cell ──────────────────────────────────────────────────── */
+    .cell {
+      width: var(--cell); height: var(--cell); border-radius: clamp(12px, 3vw, 20px);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 0;
+      position: relative; overflow: hidden;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .cell:hover:not(.taken) {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.28);
+      transform: scale(1.06);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+    .cell.taken { cursor: default; }
+
+    /* Bot-turn hover preview */
+    .board.bot-thinking .cell:not(.taken) {
+      cursor: not-allowed;
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ─── X Mark ────────────────────────────────────────────────── */
+    .cell.x::after, .cell.x::before {
+      content: ''; position: absolute;
+      width: 58%; height: 6px;
+      border-radius: 6px;
+    }
+    .cell.x::after  { background: linear-gradient(90deg,#a78bfa,#7c3aed); box-shadow:0 0 14px rgba(167,139,250,0.7); animation: drawLineX1 0.35s 0s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    .cell.x::before { background: linear-gradient(90deg,#a78bfa,#7c3aed); box-shadow:0 0 14px rgba(167,139,250,0.7); animation: drawLineX2 0.35s 0.1s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    @keyframes drawLineX1 {
+      from { transform: rotate(45deg)  scaleX(0); opacity: 0; }
+      to   { transform: rotate(45deg)  scaleX(1); opacity: 1; }
+    }
+    @keyframes drawLineX2 {
+      from { transform: rotate(-45deg) scaleX(0); opacity: 0; }
+      to   { transform: rotate(-45deg) scaleX(1); opacity: 1; }
+    }
+
+    /* ─── O Mark ────────────────────────────────────────────────── */
+    .cell.o .o-ring {
+      width: calc(var(--cell) * 0.58); height: calc(var(--cell) * 0.58); border-radius: 50%;
+      border: calc(var(--cell) * 0.06) solid transparent;
+      background: linear-gradient(#1e1b4b,#1e1b4b) padding-box,
+                  linear-gradient(135deg,#22d3ee,#06b6d4) border-box;
+      box-shadow: 0 0 18px rgba(34,211,238,0.6);
+      animation: drawCircle 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes drawCircle {
+      from { transform: scale(0) rotate(-90deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg);  opacity: 1; }
+    }
+
+    /* ─── Win cell ──────────────────────────────────────────────── */
+    .cell.win-cell {
+      background: rgba(168,85,247,0.18);
+      border-color: rgba(168,85,247,0.5);
+      animation: winCellPulse 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes winCellPulse {
+      from { box-shadow: 0 0 20px rgba(168,85,247,0.3), inset 0 1px 0 rgba(255,255,255,0.15); }
+      to   { box-shadow: 0 0 40px rgba(168,85,247,0.65), inset 0 1px 0 rgba(255,255,255,0.2); }
+    }
+
+    /* Bot-move glow flash */
+    .cell.bot-move {
+      animation: botFlash 0.5s ease forwards;
+    }
+    @keyframes botFlash {
+      0%   { box-shadow: 0 0 0 rgba(34,211,238,0); }
+      40%  { box-shadow: 0 0 40px rgba(34,211,238,0.7); }
+      100% { box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+    }
+
+    /* ─── Restart Button ────────────────────────────────────────── */
+    .btn-restart {
+      padding: 13px 40px; border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      color: rgba(255,255,255,0.88); font-size: 1rem; font-weight: 600;
+      letter-spacing: 0.06em; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+    }
+    .btn-restart::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg,rgba(168,85,247,0.3),rgba(99,102,241,0.3));
+      opacity: 0; transition: opacity 0.3s ease; border-radius: inherit;
+    }
+    .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2); }
+    .btn-restart:hover::before { opacity: 1; }
+    .btn-restart:active { transform: translateY(0); }
+    .btn-restart span { position: relative; z-index: 1; }
+
+    /* ─── Confetti ──────────────────────────────────────────────── */
+    .confetti-container { position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden; }
+    .confetti-piece {
+      position: absolute; border-radius: 2px;
+      animation: confettiFall linear forwards; top: -20px;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      85%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─── Turn Indicators ───────────────────────────────────────── */
+    .turn-indicators { display: flex; gap: 10px; }
+    .indicator { width:10px;height:10px;border-radius:50%;transition:all 0.35s ease; }
+    .indicator.x-ind { background: rgba(167,139,250,0.35); }
+    .indicator.o-ind { background: rgba(34,211,238,0.35); }
+    .indicator.x-ind.active { background:#a78bfa;box-shadow:0 0 14px rgba(167,139,250,0.8);transform:scale(1.4); }
+    .indicator.o-ind.active { background:#22d3ee;box-shadow:0 0 14px rgba(34,211,238,0.8);transform:scale(1.4); }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="confetti-container" id="confetti"></div>
+
+  <div class="container">
+    <h1 class="title">OX GAME</h1>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn2p">👥 2 Players</button>
+      <button class="mode-btn"        id="btnBot">🤖 vs Bot</button>
+    </div>
+
+    <!-- Difficulty (shown only in bot mode) -->
+    <div class="difficulty-row hidden" id="diffRow">
+      <button class="diff-btn easy   active" data-diff="easy">Easy</button>
+      <button class="diff-btn medium"        data-diff="medium">Medium</button>
+      <button class="diff-btn hard"          data-diff="hard">Hard</button>
+    </div>
+
+    <!-- Turn indicators -->
+    <div class="turn-indicators">
+      <div class="indicator x-ind active" id="xInd"></div>
+      <div class="indicator o-ind"        id="oInd"></div>
+    </div>
+
+    <!-- Status -->
+    <div class="status" id="status">Player X's Turn</div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="score-card x-card">
+        <div class="score-label" id="labelX">X Wins</div>
+        <div class="score-value" id="scoreX">0</div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Draws</div>
+        <div class="score-value" id="scoreDraw">0</div>
+      </div>
+      <div class="score-card o-card">
+        <div class="score-label" id="labelO">O Wins</div>
+        <div class="score-value" id="scoreO">0</div>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div class="board" id="board">
+      <div class="cell" data-i="0"></div><div class="cell" data-i="1"></div><div class="cell" data-i="2"></div>
+      <div class="cell" data-i="3"></div><div class="cell" data-i="4"></div><div class="cell" data-i="5"></div>
+      <div class="cell" data-i="6"></div><div class="cell" data-i="7"></div><div class="cell" data-i="8"></div>
+    </div>
+
+    <button class="btn-restart" id="btnRestart"><span>&#8635; New Game</span></button>
+  </div>
+
+  <script>
+    const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+    /* ── State ──────────────────────────────────────────────────── */
+    const state = {
+      board:   Array(9).fill(null),
+      current: 'X',
+      over:    false,
+      vsBot:   false,
+      diff:    'easy',         // 'easy' | 'medium' | 'hard'
+      scores:  { X: 0, O: 0, D: 0 }
+    };
+
+    /* ── DOM refs ───────────────────────────────────────────────── */
+    const cells       = document.querySelectorAll('.cell');
+    const boardEl     = document.getElementById('board');
+    const statusEl    = document.getElementById('status');
+    const scoreXEl    = document.getElementById('scoreX');
+    const scoreOEl    = document.getElementById('scoreO');
+    const scoreDrawEl = document.getElementById('scoreDraw');
+    const labelXEl    = document.getElementById('labelX');
+    const labelOEl    = document.getElementById('labelO');
+    const xIndEl      = document.getElementById('xInd');
+    const oIndEl      = document.getElementById('oInd');
+    const confettiEl  = document.getElementById('confetti');
+    const restartBtn  = document.getElementById('btnRestart');
+    const btn2p       = document.getElementById('btn2p');
+    const btnBotMode  = document.getElementById('btnBot');
+    const diffRow     = document.getElementById('diffRow');
+    const diffBtns    = document.querySelectorAll('.diff-btn');
+
+    /* ── Mode switching ─────────────────────────────────────────── */
+    btn2p.addEventListener('click', () => {
+      state.vsBot = false;
+      btn2p.classList.add('active');
+      btnBotMode.classList.remove('active');
+      diffRow.classList.add('hidden');
+      labelOEl.textContent = 'O Wins';
+      resetGame();
+    });
+
+    btnBotMode.addEventListener('click', () => {
+      state.vsBot = true;
+      btnBotMode.classList.add('active');
+      btn2p.classList.remove('active');
+      diffRow.classList.remove('hidden');
+      labelOEl.textContent = 'Bot Wins';
+      resetGame();
+    });
+
+    diffBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.diff = btn.dataset.diff;
+        diffBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        resetGame();
+      });
+    });
+
+    /* ── Helpers ────────────────────────────────────────────────── */
+    function updateIndicators() {
+      xIndEl.classList.toggle('active', state.current === 'X');
+      oIndEl.classList.toggle('active', state.current === 'O');
+    }
+
+    function renderStatus(msg, type = '') {
+      statusEl.className = 'status ' + type;
+      statusEl.textContent = msg;
+    }
+
+    function renderThinking() {
+      statusEl.className = 'status';
+      statusEl.innerHTML = 'Bot is thinking <span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span>';
+    }
+
+    function checkWin(b, p) {
+      return WINS.find(c => c.every(i => b[i] === p)) || null;
+    }
+    function isDraw(b) { return b.every(v => v !== null); }
+
+    /* ── Render a mark on a cell ────────────────────────────────── */
+    function placeMarkOnCell(cell, player) {
+      cell.classList.add('taken', player.toLowerCase());
+      if (player === 'O') {
+        const ring = document.createElement('div');
+        ring.className = 'o-ring';
+        cell.appendChild(ring);
+      }
+    }
+
+    /* ── Confetti ───────────────────────────────────────────────── */
+    function spawnConfetti() {
+      const colors = ['#a78bfa','#67e8f9','#f472b6','#fbbf24','#6ee7b7','#818cf8'];
+      for (let i = 0; i < 80; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.cssText = `
+          left:${Math.random()*100}%;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          width:${6+Math.random()*10}px; height:${6+Math.random()*10}px;
+          border-radius:${Math.random()>.5?'50%':'2px'};
+          animation-duration:${1.5+Math.random()*2}s;
+          animation-delay:${Math.random()*.6}s;
+        `;
+        confettiEl.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }
+    }
+
+    /* ── Post-move resolution ───────────────────────────────────── */
+    function resolveAfterMove(player, isBot = false) {
+      const winCombo = checkWin(state.board, player);
+      if (winCombo) {
+        state.over = true;
+        state.scores[player]++;
+        winCombo.forEach(i => cells[i].classList.add('win-cell'));
+        boardEl.classList.add('game-over');
+        const who = (state.vsBot && player === 'O') ? 'Bot Wins!' : `Player ${player} Wins!`;
+        renderStatus(who + ' 🎉', 'win');
+        updateScores();
+        spawnConfetti();
+        return true;
+      }
+      if (isDraw(state.board)) {
+        state.over = true;
+        state.scores.D++;
+        renderStatus("It's a Draw!", 'draw');
+        updateScores();
+        return true;
+      }
+      return false;
+    }
+
+    function updateScores() {
+      scoreXEl.textContent = state.scores.X;
+      scoreOEl.textContent = state.scores.O;
+      scoreDrawEl.textContent = state.scores.D;
+    }
+
+    /* ── Bot AI ─────────────────────────────────────────────────── */
+    function getEmptyCells(b) { return b.map((v,i) => v===null?i:-1).filter(i=>i>=0); }
+
+    // Easy: pure random
+    function botEasy(b) {
+      const empty = getEmptyCells(b);
+      return empty[Math.floor(Math.random() * empty.length)];
+    }
+
+    // Medium: win if can, block if must, else random
+    function botMedium(b) {
+      // Try to win
+      for (const i of getEmptyCells(b)) {
+        const t = [...b]; t[i] = 'O';
+        if (checkWin(t, 'O')) return i;
+      }
+      // Try to block
+      for (const i of getEmptyCells(b)) {
+        const t = [...b]; t[i] = 'X';
+        if (checkWin(t, 'X')) return i;
+      }
+      // Prefer center then corners then edges
+      const preferred = [4,0,2,6,8,1,3,5,7];
+      for (const i of preferred) if (b[i] === null) return i;
+      return botEasy(b);
+    }
+
+    // Hard: minimax (unbeatable)
+    function minimax(b, isMax, alpha, beta) {
+      if (checkWin(b, 'O')) return { score: 10 };
+      if (checkWin(b, 'X')) return { score: -10 };
+      const empty = getEmptyCells(b);
+      if (empty.length === 0) return { score: 0 };
+
+      let best = isMax ? { score: -Infinity } : { score: Infinity };
+
+      for (const i of empty) {
+        b[i] = isMax ? 'O' : 'X';
+        const res = minimax(b, !isMax, alpha, beta);
+        b[i] = null;
+        res.index = i;
+        if (isMax) {
+          if (res.score > best.score) best = res;
+          alpha = Math.max(alpha, best.score);
+        } else {
+          if (res.score < best.score) best = res;
+          beta = Math.min(beta, best.score);
+        }
+        if (beta <= alpha) break;
+      }
+      return best;
+    }
+
+    function botHard(b) {
+      return minimax([...b], true, -Infinity, Infinity).index;
+    }
+
+    function getBotMove() {
+      const b = [...state.board];
+      if (state.diff === 'easy')   return botEasy(b);
+      if (state.diff === 'medium') return botMedium(b);
+      return botHard(b);
+    }
+
+    /* ── Bot turn ───────────────────────────────────────────────── */
+    function doBotTurn() {
+      boardEl.classList.add('bot-thinking');
+      renderThinking();
+
+      // Delay varies by difficulty for feel
+      const delay = state.diff === 'easy' ? 400 : state.diff === 'medium' ? 600 : 900;
+
+      setTimeout(() => {
+        boardEl.classList.remove('bot-thinking');
+        if (state.over) return;
+
+        const idx = getBotMove();
+        state.board[idx] = 'O';
+        const cell = cells[idx];
+        placeMarkOnCell(cell, 'O');
+        cell.classList.add('bot-move');
+        setTimeout(() => cell.classList.remove('bot-move'), 500);
+
+        if (!resolveAfterMove('O', true)) {
+          state.current = 'X';
+          renderStatus("Your Turn (X)");
+          updateIndicators();
+        }
+      }, delay);
+    }
+
+    /* ── Click handler ──────────────────────────────────────────── */
+    function handleClick(e) {
+      const cell = e.currentTarget;
+      const idx  = +cell.dataset.i;
+      if (state.over || state.board[idx]) return;
+      if (state.vsBot && state.current !== 'X') return; // wait for bot
+
+      state.board[idx] = state.current;
+      placeMarkOnCell(cell, state.current);
+
+      if (resolveAfterMove(state.current)) return;
+
+      if (state.vsBot) {
+        state.current = 'O';
+        updateIndicators();
+        doBotTurn();
+      } else {
+        state.current = state.current === 'X' ? 'O' : 'X';
+        renderStatus(`Player ${state.current}'s Turn`);
+        updateIndicators();
+      }
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────── */
+    function resetGame() {
+      state.board   = Array(9).fill(null);
+      state.current = 'X';
+      state.over    = false;
+      boardEl.classList.remove('game-over', 'bot-thinking');
+
+      cells.forEach(cell => {
+        cell.className = 'cell';
+        const ring = cell.querySelector('.o-ring');
+        if (ring) ring.remove();
+      });
+
+      const msg = state.vsBot ? "Your Turn (X)" : "Player X's Turn";
+      renderStatus(msg);
+      updateIndicators();
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleClick));
+    restartBtn.addEventListener('click', resetGame);
+    updateIndicators();
+  </script>
+</body>
+</html>

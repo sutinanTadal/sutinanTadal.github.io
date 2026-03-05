@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OX Game — Liquid Glass</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="confetti-container" id="confetti"></div>
+
+  <div class="container">
+    <h1 class="title">OX GAME</h1>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn2p">👥 2 Players</button>
+      <button class="mode-btn"        id="btnBot">🤖 vs Bot</button>
+    </div>
+
+    <!-- Difficulty (shown only in bot mode) -->
+    <div class="difficulty-row hidden" id="diffRow">
+      <button class="diff-btn easy   active" data-diff="easy">Easy</button>
+      <button class="diff-btn medium"        data-diff="medium">Medium</button>
+      <button class="diff-btn hard"          data-diff="hard">Hard</button>
+    </div>
+
+    <!-- Turn indicators -->
+    <div class="turn-indicators">
+      <div class="indicator x-ind active" id="xInd"></div>
+      <div class="indicator o-ind"        id="oInd"></div>
+    </div>
+
+    <!-- Status -->
+    <div class="status" id="status">Player X's Turn</div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="score-card x-card">
+        <div class="score-label" id="labelX">X Wins</div>
+        <div class="score-value" id="scoreX">0</div>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Draws</div>
+        <div class="score-value" id="scoreDraw">0</div>
+      </div>
+      <div class="score-card o-card">
+        <div class="score-label" id="labelO">O Wins</div>
+        <div class="score-value" id="scoreO">0</div>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div class="board" id="board">
+      <div class="cell" data-i="0"></div><div class="cell" data-i="1"></div><div class="cell" data-i="2"></div>
+      <div class="cell" data-i="3"></div><div class="cell" data-i="4"></div><div class="cell" data-i="5"></div>
+      <div class="cell" data-i="6"></div><div class="cell" data-i="7"></div><div class="cell" data-i="8"></div>
+    </div>
+
+    <button class="btn-restart" id="btnRestart"><span>&#8635; New Game</span></button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
