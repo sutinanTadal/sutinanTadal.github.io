@@ -19,15 +19,15 @@ const GAMES = [
     src: 'tic-tac-toe/index.html',
     accent: 'accent-green',
   },
-  // {
-  //   id: 'mygame',
-  //   title: 'My New Game',
-  //   tag: 'Action',
-  //   icon: '🚀',
-  //   desc: 'Description of the new game.',
-  //   src: 'my-game/index.html',
-  //   accent: 'accent-blue',
-  // },
+  {
+    id: 'whogoesfirst',
+    title: 'Who Goes First?',
+    tag: 'TCG Tool',
+    icon: '🃏',
+    desc: 'Shuffle two face-down cards and pick one to decide who goes first in your TCG game. Fast, fair, and satisfying.',
+    src: 'who-go-first/index.html',
+    accent: 'accent-blue',
+  },
 ];
 
 // ── Render nav buttons ─────────────────────────────────────────

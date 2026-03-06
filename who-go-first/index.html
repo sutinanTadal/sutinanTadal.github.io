@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Who Goes First?</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="game-container">
+  <div class="header">
+    <h1>Who Goes First?</h1>
+    <p id="subtitle">Shuffle the cards and pick your fate</p>
+  </div>
+
+  <div class="cards-area" id="cards-area">
+    <div class="card-slot" id="slot-a">
+      <div class="card" id="card-a">
+        <div class="card-inner">
+          <div class="card-back">
+            <div class="card-back-pattern"></div>
+            <div class="card-back-icon">&#x1F0CF;</div>
+          </div>
+          <div class="card-front" id="front-a"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-slot" id="slot-b">
+      <div class="card" id="card-b">
+        <div class="card-inner">
+          <div class="card-back">
+            <div class="card-back-pattern"></div>
+            <div class="card-back-icon">&#x1F0CF;</div>
+          </div>
+          <div class="card-front" id="front-b"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="main-btn" class="main-btn">&#x1F500; Shuffle Cards</button>
+    <button id="reset-btn" class="reset-btn">&#x21BA; Play Again</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
