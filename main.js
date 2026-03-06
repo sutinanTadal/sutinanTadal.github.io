@@ -81,7 +81,7 @@ function launchGame(game) {
   }
 
   view.style.display = 'block';
-  document.title = `${game.title} — Microgames`;
+  document.title = `${game.title} — AppLab`;
 }
 
 function showHome() {
@@ -98,5 +98,5 @@ function showHome() {
   void home.offsetWidth;
   home.classList.add('fade');
 
-  document.title = 'Microgames';
+  document.title = 'AppLab';
 }
