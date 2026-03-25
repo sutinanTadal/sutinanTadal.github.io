@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BlueBubble</title>
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
 
@@ -51,7 +51,15 @@
   <!-- ── Log tab ── -->
   <section id="tab-log" class="tab-content active">
     <div class="section-title">How are you feeling?</div>
-    <div class="date-label" id="log-date"></div>
+    <div class="date-row">
+      <div class="date-label" id="log-date"></div>
+      <div class="cal-icon-wrap">
+        <button class="cal-icon-btn" tabindex="-1">
+          <i data-lucide="calendar"></i>
+        </button>
+        <input type="date" id="log-date-picker" class="cal-date-overlay" />
+      </div>
+    </div>
 
     <div id="log-banner" class="log-banner" style="display:none"></div>
     <div class="emotion-grid" id="emotion-picker"></div>
@@ -129,6 +137,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

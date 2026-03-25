@@ -40,6 +40,7 @@ let entriesCache    = [];
 let selectedEmotion = null;
 let selectedTags    = new Set();
 let editingId       = null;
+let logDate         = new Date(); // date currently selected in the log tab
 
 // ── Firestore helpers ─────────────────────────────────────────────
 function entriesRef() {
@@ -122,18 +123,43 @@ function formatDateLabel(d) {
                   'July','August','September','October','November','December'];
   return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
 }
-document.getElementById('log-date').textContent = formatDateLabel(new Date());
+function toDateInputValue(d) {
+  const y  = d.getFullYear();
+  const m  = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
+const logDatePicker = document.getElementById('log-date-picker');
+if (logDatePicker) {
+  logDatePicker.max   = toDateInputValue(new Date());
+  logDatePicker.value = toDateInputValue(new Date());
+  logDatePicker.addEventListener('change', () => {
+    if (!logDatePicker.value) return;
+    const today = toDateInputValue(new Date());
+    if (logDatePicker.value > today) logDatePicker.value = today;
+    const [y, m, d] = logDatePicker.value.split('-').map(Number);
+    logDate = new Date(y, m - 1, d);
+    document.getElementById('log-date').textContent = formatDateLabel(logDate);
+    resetLogForm();
+    checkDateEntry(logDate);
+  });
+}
+document.getElementById('log-date').textContent = formatDateLabel(logDate);
 
 // ── Today helpers ─────────────────────────────────────────────────
 function startOfDay(d) {
   const c = new Date(d); c.setHours(0,0,0,0); return c;
 }
-function getTodayEntry() {
-  const today    = startOfDay(new Date());
-  const todayEnd = new Date(today); todayEnd.setHours(23,59,59,999);
+function getEntryForDate(date) {
+  const dayStart = startOfDay(date);
+  const dayEnd   = new Date(dayStart); dayEnd.setHours(23,59,59,999);
   return entriesCache.find(e => {
-    const t = new Date(e.timestamp); return t >= today && t <= todayEnd;
+    const t = new Date(e.timestamp); return t >= dayStart && t <= dayEnd;
   }) || null;
+}
+function getTodayEntry() {
+  return getEntryForDate(new Date());
 }
 
 // ── Icon helper ───────────────────────────────────────────────────
@@ -218,12 +244,38 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   applyThemeIcon();
 });
 
-// ── Check today on load ───────────────────────────────────────────
-function checkTodayEntry() {
-  const todayEntry = getTodayEntry();
-  if (todayEntry) {
-    loadEntryForEdit(todayEntry, "You've already logged today — editing your entry");
+// ── Reset log form ────────────────────────────────────────────────
+function resetLogForm() {
+  editingId = null;
+  selectedEmotion = null;
+  selectedTags.clear();
+  bgLayers.forEach(l => { l.style.opacity = '0'; });
+  document.querySelectorAll('.emotion-btn').forEach(b => {
+    b.classList.remove('selected'); b.style.borderColor = ''; b.style.background = '';
+  });
+  document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('note-input').value = '';
+  document.getElementById('emotion-label').textContent = 'Pick an emotion';
+  document.getElementById('emotion-label').style.color = '';
+  document.getElementById('save-btn').disabled = true;
+  document.getElementById('save-btn').textContent = 'Save Entry';
+  document.getElementById('log-banner').style.display = 'none';
+}
+
+// ── Check entry for selected date ─────────────────────────────────
+function checkDateEntry(date) {
+  const existing = getEntryForDate(date);
+  if (existing) {
+    const isToday = startOfDay(date).getTime() === startOfDay(new Date()).getTime();
+    const label   = isToday
+      ? "You've already logged today — editing your entry"
+      : `You've already logged ${formatDateLabel(date)} — editing your entry`;
+    loadEntryForEdit(existing, label);
   }
+}
+
+function checkTodayEntry() {
+  checkDateEntry(logDate);
 }
 
 // ── Hex → rgba ────────────────────────────────────────────────────
@@ -273,34 +325,26 @@ document.getElementById('save-btn').addEventListener('click', async () => {
       emotion: selectedEmotion, tags: [...selectedTags], note
     });
   } else {
-    const alreadyToday = getTodayEntry();
-    if (alreadyToday) {
-      loadEntryForEdit(alreadyToday, "You've already logged today — editing your entry");
+    const alreadyDate = getEntryForDate(logDate);
+    if (alreadyDate) {
+      const isToday = startOfDay(logDate).getTime() === startOfDay(new Date()).getTime();
+      const label   = isToday
+        ? "You've already logged today — editing your entry"
+        : `You've already logged ${formatDateLabel(logDate)} — editing your entry`;
+      loadEntryForEdit(alreadyDate, label);
       return;
     }
+    // Use noon of logDate for past entries, current time for today
+    const isToday = startOfDay(logDate).getTime() === startOfDay(new Date()).getTime();
+    const ts      = isToday ? new Date() : new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate(), 12, 0, 0);
     await addEntryToFirestore({
       emotion: selectedEmotion, tags: [...selectedTags], note,
-      timestamp: new Date().toISOString(),
+      timestamp: ts.toISOString(),
     });
   }
 
-  // Reset form
-  editingId = null;
-  selectedEmotion = null;
-  selectedTags.clear();
-  bgLayers.forEach(l => { l.style.opacity = '0'; });
-  document.querySelectorAll('.emotion-btn').forEach(b => {
-    b.classList.remove('selected'); b.style.borderColor = ''; b.style.background = '';
-  });
-  document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('note-input').value = '';
-  document.getElementById('emotion-label').textContent = 'Pick an emotion';
-  document.getElementById('emotion-label').style.color = '';
-  document.getElementById('save-btn').disabled = true;
-  document.getElementById('save-btn').textContent = 'Save Entry';
-  document.getElementById('log-banner').style.display = 'none';
-
-  checkTodayEntry();
+  resetLogForm();
+  checkDateEntry(logDate);
 
   const msg = document.getElementById('save-msg');
   msg.textContent = wasEdit ? '✓ Entry updated' : '✓ Entry saved';
@@ -566,8 +610,8 @@ function formatEntryTime(iso) {
   const entryDay  = startOfDay(d);
   const time      = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   if (entryDay.getTime() === today.getTime())     return `Today ${time}`;
-  if (entryDay.getTime() === yesterday.getTime()) return `Yesterday ${time}`;
-  return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + time;
+  if (entryDay.getTime() === yesterday.getTime()) return `Yesterday`;
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
 function renderEntryList() {

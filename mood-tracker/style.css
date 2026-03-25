@@ -1,11 +1,38 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ── Auth overlay ── */
+@keyframes orbPulse1 {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.15); }
+}
+@keyframes orbPulse2 {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.12); }
+}
+
 .auth-overlay {
   position: fixed; inset: 0; z-index: 200;
   display: flex; align-items: center; justify-content: center;
   background: var(--bg);
+  overflow: hidden;
 }
+.auth-overlay::before {
+  content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, #FFD93D, transparent);
+  top: -160px; left: -140px;
+  filter: blur(80px); opacity: 0.22;
+  animation: orbPulse1 8s ease-in-out infinite;
+}
+.auth-overlay::after {
+  content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #4A90D9, transparent);
+  bottom: -100px; right: -100px;
+  filter: blur(80px); opacity: 0.22;
+  animation: orbPulse2 11s ease-in-out infinite;
+}
+
 .auth-card {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   padding: 40px 32px; text-align: center;
@@ -173,8 +200,25 @@ body {
   font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
   text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
 }
+.date-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
+}
 .date-label {
-  font-size: 1.05rem; font-weight: 600; margin-bottom: 22px; color: var(--text);
+  font-size: 1.05rem; font-weight: 600; color: var(--text);
+}
+.cal-icon-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.cal-icon-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 5px; border-radius: 8px;
+  color: var(--accent); display: flex; align-items: center;
+  transition: opacity 0.18s; pointer-events: none;
+}
+.cal-icon-btn svg { width: 1.2rem; height: 1.2rem; stroke-width: 2; }
+.cal-date-overlay {
+  position: absolute; inset: 0; opacity: 0;
+  width: 100%; height: 100%; cursor: pointer;
 }
 
 /* ── Log banner (today/editing notice) ── */

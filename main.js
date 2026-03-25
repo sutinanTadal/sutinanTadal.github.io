@@ -98,10 +98,8 @@ function launchGame(game) {
   const view = document.getElementById('game-view');
   const frame = document.getElementById('game-frame');
 
-  if (frame.dataset.current !== game.id) {
-    frame.src = game.src;
-    frame.dataset.current = game.id;
-  }
+  frame.src = game.src + '?t=' + Date.now();
+  frame.dataset.current = game.id;
 
   view.style.display = 'block';
   document.title = `${game.title} — AppLab`;
