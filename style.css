@@ -59,6 +59,30 @@ nav {
   backdrop-filter: blur(20px) saturate(1.5);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   border-bottom: 1px solid var(--border);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+nav.nav-hidden { transform: translateY(-100%); }
+
+/* ── Floating nav toggle button ── */
+.nav-fab {
+  position: fixed;
+  top: 12px; left: 16px;
+  z-index: 200;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(10,10,15,0.85);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.nav-fab.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+@media (hover: hover) {
+  .nav-fab:hover { background: var(--surface-hover); border-color: var(--border-hover); }
 }
 
 .nav-logo {
@@ -137,7 +161,9 @@ nav {
   top: var(--nav-h);
   left: 0; right: 0; bottom: 0;
   z-index: 1;
+  transition: top 0.35s cubic-bezier(0.4,0,0.2,1);
 }
+#content.nav-hidden { top: 0; }
 
 /* ── Home screen ── */
 #home {

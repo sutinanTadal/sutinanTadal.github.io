@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlueBubble</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Auth overlay ── -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card">
+    <img class="auth-logo" src="bluebubble.png" alt="BlueBubble" />
+    <h1 class="auth-title">BlueBubble</h1>
+    <p class="auth-sub">Track how you feel, every day.</p>
+    <button class="google-signin-btn" id="google-signin-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="bg-emotion" id="bg-emotion-a"></div>
+  <div class="bg-emotion" id="bg-emotion-b"></div>
+</div>
+
+<div class="app" style="visibility:hidden">
+
+  <!-- ── Top bar: tabs + user + theme toggle ── -->
+  <div class="topbar">
+    <nav class="tabs">
+      <button class="tab active" data-tab="log">Log Mood</button>
+      <button class="tab" data-tab="history">History</button>
+      <button class="tab" data-tab="stats">Stats</button>
+    </nav>
+    <div class="user-info">
+      <img class="user-avatar" id="user-avatar" src="" alt="" />
+      <button class="signout-btn" id="signout-btn" title="Sign out">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">
+      <i data-lucide="sun" id="theme-icon"></i>
+    </button>
+  </div>
+
+  <!-- ── Log tab ── -->
+  <section id="tab-log" class="tab-content active">
+    <div class="section-title">How are you feeling?</div>
+    <div class="date-label" id="log-date"></div>
+
+    <div id="log-banner" class="log-banner" style="display:none"></div>
+    <div class="emotion-grid" id="emotion-picker"></div>
+    <div class="emotion-selected-label" id="emotion-label">Pick an emotion</div>
+
+    <div class="tags-row" id="tags-row">
+      <span class="tag-chip" data-tag="work">💼 Work</span>
+      <span class="tag-chip" data-tag="health">💪 Health</span>
+      <span class="tag-chip" data-tag="social">👥 Social</span>
+      <span class="tag-chip" data-tag="sleep">😴 Sleep</span>
+      <span class="tag-chip" data-tag="food">🍜 Food</span>
+      <span class="tag-chip" data-tag="exercise">🏃 Exercise</span>
+      <span class="tag-chip" data-tag="creative">🎨 Creative</span>
+      <span class="tag-chip" data-tag="nature">🌿 Nature</span>
+      <span class="tag-chip" data-tag="love">❤️ Love</span>
+    </div>
+
+    <textarea id="note-input" placeholder="Add a note… (optional)" rows="3"></textarea>
+    <button class="save-btn" id="save-btn" disabled>Save Entry</button>
+    <div class="save-msg" id="save-msg"></div>
+  </section>
+
+  <!-- ── History tab ── -->
+  <section id="tab-history" class="tab-content">
+
+    <!-- View toggle -->
+    <div class="view-tabs">
+      <button class="view-tab active" data-view="week">Week</button>
+      <button class="view-tab" data-view="month">Month</button>
+      <button class="view-tab" data-view="year">Year</button>
+    </div>
+
+    <!-- Week view -->
+    <div class="history-view" id="view-week">
+      <div class="week-strip" id="week-strip"></div>
+    </div>
+
+    <!-- Month view -->
+    <div class="history-view" id="view-month" style="display:none">
+      <div class="cal-nav-row">
+        <button class="cal-nav-btn" id="cal-prev"><i data-lucide="chevron-left"></i></button>
+        <span class="cal-month-title" id="cal-title"></span>
+        <button class="cal-nav-btn" id="cal-next"><i data-lucide="chevron-right"></i></button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- Year view -->
+    <div class="history-view" id="view-year" style="display:none">
+      <div class="cal-nav-row">
+        <button class="cal-nav-btn" id="year-prev"><i data-lucide="chevron-left"></i></button>
+        <span class="cal-month-title" id="year-title"></span>
+        <button class="cal-nav-btn" id="year-next"><i data-lucide="chevron-right"></i></button>
+      </div>
+      <div id="year-heatmap"></div>
+    </div>
+
+    <div class="section-title" style="margin-top:28px">All entries</div>
+    <div class="entry-list" id="entry-list"></div>
+    <div class="empty-msg" id="history-empty">No entries yet. Log your first mood!</div>
+  </section>
+
+  <!-- ── Stats tab ── -->
+  <section id="tab-stats" class="tab-content">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="section-title" style="margin-top:24px">Emotion frequency — last 14 days</div>
+    <div class="chart-wrap" id="chart-wrap"></div>
+    <div class="empty-msg" id="stats-empty">Log some moods to see your stats!</div>
+  </section>
+
+</div>
+
+<!-- Firebase compat CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
