@@ -189,6 +189,7 @@ EMOTIONS.forEach(em => {
     label.style.color = em.color;
     document.getElementById('save-btn').disabled = false;
     setEmotionBg(em.color);
+    setSaveBtnEmotion(em.color);
   });
   picker.appendChild(btn);
 });
@@ -212,6 +213,7 @@ function loadEntryForEdit(entry, bannerText) {
     label.textContent = `Feeling ${em.label}`;
     label.style.color = em.color;
     setEmotionBg(em.color);
+    setSaveBtnEmotion(em.color);
   }
   selectedTags.clear();
   (entry.tags || []).forEach(t => selectedTags.add(t));
@@ -259,6 +261,7 @@ function resetLogForm() {
   document.getElementById('emotion-label').style.color = '';
   document.getElementById('save-btn').disabled = true;
   document.getElementById('save-btn').textContent = 'Save Entry';
+  setSaveBtnEmotion(null);
   document.getElementById('log-banner').style.display = 'none';
 }
 
@@ -268,7 +271,7 @@ function checkDateEntry(date) {
   if (existing) {
     const isToday = startOfDay(date).getTime() === startOfDay(new Date()).getTime();
     const label   = isToday
-      ? "You've already logged today — editing your entry"
+      ? "You've already logged today"
       : `You've already logged ${formatDateLabel(date)} — editing your entry`;
     loadEntryForEdit(existing, label);
   }
@@ -305,6 +308,21 @@ function setEmotionBg(color) {
   bgActive = next;
 }
 
+function setSaveBtnEmotion(color) {
+  const btn = document.getElementById('save-btn');
+  if (color) {
+    btn.style.background = `linear-gradient(135deg, ${hexToRgba(color, 0.28)} 0%, ${hexToRgba(color, 0.10)} 100%), rgba(10,10,15,0.55)`;
+    btn.style.borderColor = hexToRgba(color, 0.35);
+    btn.style.color = color;
+    btn.style.textShadow = `0 0 12px ${hexToRgba(color, 0.5)}`;
+  } else {
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.style.textShadow = '';
+  }
+}
+
 // ── Tag chips ─────────────────────────────────────────────────────
 document.querySelectorAll('.tag-chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -329,7 +347,7 @@ document.getElementById('save-btn').addEventListener('click', async () => {
     if (alreadyDate) {
       const isToday = startOfDay(logDate).getTime() === startOfDay(new Date()).getTime();
       const label   = isToday
-        ? "You've already logged today — editing your entry"
+        ? "You've already logged today"
         : `You've already logged ${formatDateLabel(logDate)} — editing your entry`;
       loadEntryForEdit(alreadyDate, label);
       return;

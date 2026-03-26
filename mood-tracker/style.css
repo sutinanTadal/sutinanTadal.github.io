@@ -19,7 +19,7 @@
 .auth-overlay::before {
   content: ''; position: absolute; border-radius: 50%; pointer-events: none;
   width: 520px; height: 520px;
-  background: radial-gradient(circle, #FFD93D, transparent);
+  background: radial-gradient(circle, #FFBA08, transparent);
   top: -160px; left: -140px;
   filter: blur(80px); opacity: 0.22;
   animation: orbPulse1 8s ease-in-out infinite;
@@ -27,7 +27,7 @@
 .auth-overlay::after {
   content: ''; position: absolute; border-radius: 50%; pointer-events: none;
   width: 400px; height: 400px;
-  background: radial-gradient(circle, #4A90D9, transparent);
+  background: radial-gradient(circle, #C084FC, transparent);
   bottom: -100px; right: -100px;
   filter: blur(80px); opacity: 0.22;
   animation: orbPulse2 11s ease-in-out infinite;
@@ -83,10 +83,10 @@
   --border-hover: rgba(255,255,255,0.26);
   --text: #f0f0f5;
   --muted: rgba(240,240,245,0.5);
-  --accent: #FFD93D;
-  --save-btn-text: #1a1200;
-  --orb1-color: #FFD93D;
-  --orb2-color: #4A90D9;
+  --accent: #FFBA08;
+  --save-btn-text: #1a0e00;
+  --orb1-color: #FFBA08;
+  --orb2-color: #C084FC;
 }
 
 /* ── Light mode ── */
@@ -98,10 +98,10 @@
   --border-hover: rgba(0,0,0,0.22);
   --text: #1a1a2e;
   --muted: rgba(26,26,46,0.45);
-  --accent: #e6a800;
-  --save-btn-text: #1a1200;
-  --orb1-color: #FFD93D;
-  --orb2-color: #4A90D9;
+  --accent: #D4920A;
+  --save-btn-text: #1a0e00;
+  --orb1-color: #FFBA08;
+  --orb2-color: #C084FC;
 }
 
 html {
@@ -127,8 +127,8 @@ body {
   filter: blur(80px); opacity: 0.22;
   animation: drift 18s ease-in-out infinite alternate;
 }
-.orb1 { width: 520px; height: 520px; background: radial-gradient(circle, #FFD93D, transparent); top: -160px; left: -140px; }
-.orb2 { width: 400px; height: 400px; background: radial-gradient(circle, #4A90D9, transparent); bottom: -100px; right: -100px; animation-delay: -8s; }
+.orb1 { width: 520px; height: 520px; background: radial-gradient(circle, #FFBA08, transparent); top: -160px; left: -140px; }
+.orb2 { width: 400px; height: 400px; background: radial-gradient(circle, #C084FC, transparent); bottom: -100px; right: -100px; animation-delay: -8s; }
 
 /* ── Emotion gradient overlay (cross-fade between two layers) ── */
 .bg-emotion {
@@ -187,7 +187,7 @@ body {
   background: transparent; color: var(--muted);
   font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
-.tab.active  { background: rgba(255,217,61,0.18); color: var(--accent); }
+.tab.active  { background: rgba(255,186,8,0.18); color: var(--accent); }
 .tab:hover:not(.active) { background: var(--surface-hover); color: var(--text); }
 
 /* ── Tab content ── */
@@ -224,8 +224,8 @@ body {
 /* ── Log banner (today/editing notice) ── */
 .log-banner {
   display: flex; align-items: center; gap: 8px;
-  background: rgba(255,217,61,0.10);
-  border: 1px solid rgba(255,217,61,0.25);
+  background: rgba(255,186,8,0.10);
+  border: 1px solid rgba(255,186,8,0.25);
   border-radius: 10px; padding: 9px 14px;
   font-size: 0.83rem; color: var(--accent);
   margin-bottom: 16px;
@@ -240,7 +240,7 @@ body {
   flex-shrink: 0; margin-left: 4px;
 }
 @media (hover: hover) {
-  .entry-edit-btn:hover { color: var(--accent); background: rgba(255,217,61,0.12); }
+  .entry-edit-btn:hover { color: var(--accent); background: rgba(255,186,8,0.12); }
 }
 
 /* ── Emotion grid ── */
@@ -286,7 +286,7 @@ body {
   .tag-chip:hover { border-color: var(--border-hover); color: var(--text); }
 }
 .tag-chip.selected {
-  border-color: var(--accent); background: rgba(255,217,61,0.12); color: var(--accent);
+  border-color: var(--accent); background: rgba(255,186,8,0.12); color: var(--accent);
 }
 
 /* ── Textarea ── */
@@ -303,11 +303,16 @@ textarea::placeholder { color: var(--muted); }
 /* ── Save button ── */
 .save-btn {
   width: 100%; padding: 14px; border: none; border-radius: 12px;
-  background: linear-gradient(135deg, #FFD93D, #ffbe00);
-  color: var(--save-btn-text); font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text); font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: all 0.35s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 16px rgba(0,0,0,0.3);
 }
 .save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.save-btn:not(:disabled):hover { filter: brightness(1.1); transform: translateY(-1px); }
+.save-btn:not(:disabled):hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 20px rgba(0,0,0,0.4); }
 .save-msg {
   text-align: center; font-size: 0.85rem; color: var(--accent);
   margin-top: 10px; height: 20px;
@@ -426,8 +431,8 @@ textarea::placeholder { color: var(--muted); }
 .entry-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .entry-tag {
   font-size: 0.71rem; padding: 2px 8px; border-radius: 20px;
-  background: rgba(255,217,61,0.10); color: var(--accent);
-  border: 1px solid rgba(255,217,61,0.22);
+  background: rgba(255,186,8,0.10); color: var(--accent);
+  border: 1px solid rgba(255,186,8,0.22);
 }
 .entry-note {
   font-size: 0.84rem; color: var(--muted);
