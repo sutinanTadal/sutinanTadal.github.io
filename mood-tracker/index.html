@@ -4,12 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BlueBubble</title>
-<link rel="stylesheet" href="style.css?v=6" />
+<link rel="stylesheet" href="style.css?v=29" />
 </head>
 <body>
 
+<!-- ── Loading screen ── -->
+<div class="loading-screen" id="loading-screen">
+  <div class="l-orb"></div>
+</div>
+
 <!-- ── Auth overlay ── -->
-<div class="auth-overlay" id="auth-overlay">
+<div class="auth-overlay" id="auth-overlay" style="display:none">
   <div class="auth-card">
     <img class="auth-logo" src="bluebubble.png" alt="BlueBubble" />
     <h1 class="auth-title">BlueBubble</h1>
@@ -133,10 +138,25 @@
 </div>
 
 <!-- Firebase compat CDN -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="tab bottom-tab active" data-tab="log">
+    <i data-lucide="pencil-line"></i>
+    <span>Log</span>
+  </button>
+  <button class="tab bottom-tab" data-tab="history">
+    <i data-lucide="calendar-days"></i>
+    <span>History</span>
+  </button>
+  <button class="tab bottom-tab" data-tab="stats">
+    <i data-lucide="bar-chart-2"></i>
+    <span>Stats</span>
+  </button>
+</nav>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

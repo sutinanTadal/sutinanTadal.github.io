@@ -78,6 +78,12 @@ async function updateEntryInFirestore(id, updates) {
 }
 
 // ── Auth state ────────────────────────────────────────────────────
+function hideLoadingScreen() {
+  const el = document.getElementById('loading-screen');
+  el.classList.add('hide');
+  el.addEventListener('animationend', () => el.style.display = 'none', { once: true });
+}
+
 auth.onAuthStateChanged(async user => {
   if (user) {
     currentUser = user;
@@ -88,11 +94,13 @@ auth.onAuthStateChanged(async user => {
     else { avatar.style.display = 'none'; }
     await loadEntriesFromFirestore();
     checkTodayEntry();
+    hideLoadingScreen();
   } else {
     currentUser = null;
     entriesCache = [];
     document.getElementById('auth-overlay').style.display = 'flex';
     document.querySelector('.app').style.visibility = 'hidden';
+    hideLoadingScreen();
   }
 });
 
@@ -109,7 +117,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     const tab = btn.dataset.tab;
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
+    document.querySelectorAll(`.tab[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
     document.getElementById(`tab-${tab}`).classList.add('active');
     if (tab === 'history') renderHistory();
     if (tab === 'stats')   renderStats();
@@ -311,14 +319,14 @@ function setEmotionBg(color) {
 function setSaveBtnEmotion(color) {
   const btn = document.getElementById('save-btn');
   if (color) {
-    btn.style.background = `linear-gradient(135deg, ${hexToRgba(color, 0.28)} 0%, ${hexToRgba(color, 0.10)} 100%), rgba(10,10,15,0.55)`;
-    btn.style.borderColor = hexToRgba(color, 0.35);
-    btn.style.color = color;
-    btn.style.textShadow = `0 0 12px ${hexToRgba(color, 0.5)}`;
+    btn.style.background = `linear-gradient(135deg, ${color} 0%, ${hexToRgba(color, 0.75)} 100%)`;
+    btn.style.color = '#1a0e00';
+    btn.style.boxShadow = `0 4px 20px ${hexToRgba(color, 0.45)}`;
+    btn.style.textShadow = '';
   } else {
     btn.style.background = '';
-    btn.style.borderColor = '';
     btn.style.color = '';
+    btn.style.boxShadow = '';
     btn.style.textShadow = '';
   }
 }
@@ -340,7 +348,8 @@ document.getElementById('save-btn').addEventListener('click', async () => {
 
   if (editingId) {
     await updateEntryInFirestore(editingId, {
-      emotion: selectedEmotion, tags: [...selectedTags], note
+      emotion: selectedEmotion, tags: [...selectedTags], note,
+      timestamp: new Date().toISOString()
     });
   } else {
     const alreadyDate = getEntryForDate(logDate);
@@ -661,7 +670,7 @@ function renderEntryList() {
       loadEntryForEdit(entry, `Editing entry — ${dateStr}`);
       document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-      document.querySelector('.tab[data-tab="log"]').classList.add('active');
+      document.querySelectorAll('.tab[data-tab="log"]').forEach(b => b.classList.add('active'));
       document.getElementById('tab-log').classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -691,8 +700,13 @@ function renderStats() {
 
   const freq = {};
   entriesCache.forEach(e => { freq[e.emotion] = (freq[e.emotion] || 0) + 1; });
-  const topId = Object.entries(freq).sort((a,b) => b[1]-a[1])[0][0];
-  const topEm = EMOTION_MAP[topId];
+  const sortedFreq = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+  const maxFreq = sortedFreq[0][1];
+  const topIds = sortedFreq.filter(([,c]) => c === maxFreq).map(([id]) => id);
+  const topEm = EMOTION_MAP[topIds[0]];
+  const topLabel = topIds.length > 1
+    ? topIds.map(id => EMOTION_MAP[id]?.label).filter(Boolean).join(' & ')
+    : topEm?.label;
 
   const today    = startOfDay(new Date());
   const todayEnd = new Date(today); todayEnd.setHours(23,59,59,999);
@@ -700,14 +714,47 @@ function renderStats() {
     const t = new Date(e.timestamp); return t >= today && t <= todayEnd;
   }).length;
 
-  const stats = [
-    { label: 'Top Emotion',    value: topEm.label, sub: 'most frequent' },
+  // ── Top Emotion orb card ──
+  const topCard = document.createElement('div');
+  topCard.className = 'stat-card stat-card-orbs';
+
+  const orbWrap = document.createElement('div');
+  orbWrap.className = 'orb-stat-wrap';
+
+  const sortedOrbs = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+  const maxCount   = sortedOrbs[0][1];
+  // Scattered positions [left%, top%] for up to 6 orbs
+  const orbPos = [[28,40],[68,28],[18,68],[72,62],[50,16],[50,76]];
+  sortedOrbs.slice(0, 6).forEach(([emId, count], i) => {
+    const em   = EMOTION_MAP[emId]; if (!em) return;
+    const r    = count / maxCount;
+    const size = Math.max(14, Math.round(Math.sqrt(r) * 76) - i * 3); // ties get a 3% step down per rank
+    const blur = Math.round(8 + r * 18);
+    const [lx, ly] = orbPos[i] || [50, 50];
+    const orb  = document.createElement('div');
+    orb.className = 'orb-stat';
+    orb.style.cssText = `width:${size}%;padding-bottom:${size}%;left:${lx}%;top:${ly}%;background:radial-gradient(circle,${em.color},transparent);filter:blur(${blur}px);opacity:${(0.45 + r * 0.2).toFixed(2)};`;
+    orbWrap.appendChild(orb);
+  });
+
+  const orbText = document.createElement('div');
+  orbText.className = 'orb-stat-text';
+  orbText.innerHTML = `
+    <div class="stat-label">Top Emotion</div>
+    <div class="stat-value" style="color:${topEm.color}">${topLabel}</div>
+    <div class="stat-sub">most frequent</div>
+  `;
+
+  topCard.appendChild(orbWrap);
+  topCard.appendChild(orbText);
+  grid.appendChild(topCard);
+
+  // ── Remaining stat cards ──
+  [
     { label: 'Current Streak', value: `${streak}`, sub: streak === 1 ? 'day' : 'days' },
     { label: 'Total Entries',  value: `${entriesCache.length}`, sub: 'logged' },
     { label: 'Today',          value: `${todayCount}`, sub: todayCount === 1 ? 'entry' : 'entries' },
-  ];
-
-  stats.forEach(s => {
+  ].forEach(s => {
     const card = document.createElement('div');
     card.className = 'stat-card';
     card.innerHTML = `
@@ -724,8 +771,12 @@ function renderStats() {
 function calcStreak(entries) {
   if (!entries.length) return 0;
   const today = startOfDay(new Date());
+  // If today has no entry, start counting from yesterday
+  const todayEnd = new Date(today); todayEnd.setHours(23,59,59,999);
+  const hasToday = entries.some(e => { const t = new Date(e.timestamp); return t >= today && t <= todayEnd; });
   let streak = 0;
   let check  = new Date(today);
+  if (!hasToday) check.setDate(check.getDate() - 1);
   while (true) {
     const checkEnd = new Date(check); checkEnd.setHours(23,59,59,999);
     const has = entries.some(e => {
