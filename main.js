@@ -35,7 +35,8 @@ const GAMES = [
     icon: '🫧',
     logo: 'mood-tracker/bluebubble.png',
     desc: 'BlueBubble — Track how you feel every day using Inside Out emotions. Log Joy, Sadness, Anxiety, and more — with notes, tags, and streaks.',
-    src: 'mood-tracker/index.html',
+    src: 'https://laleonlelion.web.app',
+    external: true,
     accent: 'accent-red',
   },
 ];
@@ -88,6 +89,11 @@ function toggleNav() {
 }
 
 function launchGame(game) {
+  if (game.external) {
+    window.open(game.src, '_blank');
+    return;
+  }
+
   currentGame = game;
 
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
