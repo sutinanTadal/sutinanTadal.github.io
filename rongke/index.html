@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Sing Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Video left, score right, queue along the bottom; stacks on phones. */
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --ink:#16181D; --muted:#7A808C; --line:#E3E6EB; --accent:#3D5AFE;
+  --good:#1F9D6B; --warn:#B4541A; --font:"Geist","IBM Plex Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111317; --surface:#181B21; --ink:#ECEEF2; --muted:#8B919C; --line:#262A32; --accent:#7C90FF; --good:#4CC995; --warn:#F0A060; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111317; --surface:#181B21; --ink:#ECEEF2; --muted:#8B919C; --line:#262A32; --accent:#7C90FF; --good:#4CC995; --warn:#F0A060; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);
+  padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
+.app{max-width:1180px;margin:0 auto;display:grid;gap:24px;
+  grid-template-areas:"title" "video" "stage" "queue"}
+h1{grid-area:title} .video{grid-area:video} .stage{grid-area:stage} .queue-wrap{grid-area:queue}
+@media (min-width:900px){
+  .app{grid-template-columns:minmax(0,1fr) 320px;grid-template-areas:"title title" "video stage" "queue queue";align-items:start}
+  .queue-wrap{border-top:1px solid var(--line);padding-top:24px}
+  .queue-wrap form{max-width:560px}
+  .queue ol{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:12px}
+}
+.stage,.queue-wrap{display:grid;gap:16px;min-width:0;align-content:start}
+h1{font-size:15px;font-weight:600;margin:0}
+h2{font-size:13px;font-weight:500;color:var(--muted);margin:0}
+form{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+button{font:500 15px var(--font);border:0;border-radius:10px;padding:11px 18px;cursor:pointer;
+  background:var(--ink);color:var(--bg)}
+button.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+button:disabled{opacity:.35;cursor:not-allowed}
+:is(button,input,a):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.video{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:12px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.video iframe,#player{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video .note{position:absolute;inset:0;display:grid;place-content:center;gap:8px;text-align:center;padding:20px;color:var(--muted);font-size:14px}
+.video .note a{color:var(--ink)}
+
+.modes{display:flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.modes label{flex:1;text-align:center;padding:7px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--muted)}
+.modes input{position:absolute;opacity:0}
+.modes input:checked+span{color:var(--ink);font-weight:500}
+.modes label:has(input:checked){background:var(--bg)}
+.modes label:has(input:disabled){opacity:.4;cursor:not-allowed}
+
+.score{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+#score{font-size:clamp(64px,14vw,112px);font-weight:600;line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.side{text-align:right;display:grid;gap:2px}
+#judge{font-size:18px;font-weight:500;min-height:27px}
+#meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+canvas{width:100%;height:110px;display:block}
+#status{margin:0;font-size:14px;color:var(--muted);min-height:21px}
+#status.warn{color:var(--warn)}
+.actions{display:flex;gap:8px}
+.actions button{flex:1}
+.final{text-align:center;display:grid;gap:6px;justify-items:center;padding:12px 0}
+.final .n{font-size:88px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.final p{margin:0;color:var(--muted)}
+
+.queue .empty{margin:0;color:var(--muted);font-size:14px}
+.queue ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.queue li{display:flex;align-items:center;gap:8px;padding:6px;border-radius:10px;border:1px solid transparent}
+.queue li.cur{background:var(--surface);border-color:var(--line)}
+.queue li.dragging{opacity:.5}
+.queue .grip{cursor:grab;color:var(--muted);padding:6px 2px;font-size:16px;line-height:1;user-select:none;touch-action:none}
+.queue img{width:56px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:var(--line);flex:none}
+.queue .pick{flex:1;min-width:0;text-align:left;background:none;color:var(--ink);padding:0;border-radius:6px;display:grid}
+.queue .pick span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.queue .pick small{color:var(--muted);font-size:12px;font-weight:400}
+.queue .icon{background:none;color:var(--muted);padding:6px;font-size:15px;line-height:1}
+.queue .icon:disabled{opacity:.25}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Sing Score</h1>
+
+  <div class="video" id="video">
+    <div id="player"></div>
+    <div class="note" id="videoNote"><span>Add a song from the list to start.</span></div>
+  </div>
+
+  <main class="stage">
+    <section class="score" aria-live="polite">
+      <span id="score">–</span>
+      <div class="side"><span id="judge"></span><span id="meta">Not started</span></div>
+    </section>
+
+    <canvas id="lane" aria-hidden="true"></canvas>
+    <p id="status">Add a song, then press Start. Use headphones.</p>
+
+    <div class="modes" role="radiogroup" aria-label="Scoring mode">
+      <label><input type="radio" name="mode" id="modeVoice" value="voice" checked><span>Voice only</span></label>
+      <label><input type="radio" name="mode" id="modeMatch" value="match"><span>Match the song</span></label>
+    </div>
+
+    <div class="actions">
+      <button id="startBtn" disabled>Start</button>
+      <button id="stopBtn" class="ghost" disabled>Finish</button>
+    </div>
+
+    <section class="final" id="final" hidden>
+      <span class="n" id="finalScore">0</span>
+      <p id="finalMsg"></p>
+      <button id="nextBtn" hidden>Next song</button>
+    </section>
+  </main>
+
+  <aside class="queue-wrap">
+    <h2>Queue</h2>
+    <form id="linkForm">
+      <input type="text" id="link" placeholder="Paste YouTube links" aria-label="Song links" autocomplete="off">
+      <button type="button" id="addBtn">Add</button>
+    </form>
+    <section class="queue" aria-label="Song queue">
+      <p class="empty" id="emptyQ">Paste one link or several at once.</p>
+      <ol id="queue"></ol>
+    </section>
+  </aside>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $('lane'), g = canvas.getContext('2d');
+let ac, micA, songA, micBuf, songBuf, micStream, tabStream;
+let running = false, playing = false, t = 0, lastNow = 0;
+let points = 0, total = 0, sung = 0;
+let micTrail = [], songTrail = [], lastSang = -99;
+let fracs = [], hist = new Float32Array(12), judgeWin = {s:0, d:0, t:0};
+let player = null, ytReady = false, embedBlocked = false;
+
+const isFile = location.protocol === 'file:';
+const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad/i.test(navigator.userAgent);
+if (!canShare){ $('modeMatch').disabled = true; $('modeMatch').parentElement.title = 'Needs Chrome on a computer'; }
+const mode = () => document.querySelector('input[name=mode]:checked').value;
+function say(msg, warn){ $('status').textContent = msg; $('status').classList.toggle('warn', !!warn); }
+
+/* ---------- pitch (McLeod NSDF) ---------- */
+function detect(x, n, sr, minF, maxF, gate){
+  let rms = 0; for (let i = 0; i < n; i++) rms += x[i]*x[i];
+  if (Math.sqrt(rms/n) < gate) return null;
+  const lo = Math.max(2, Math.floor(sr/maxF)), hi = Math.min(Math.ceil(sr/minF), n >> 1);
+  const d = new Float32Array(hi + 2);
+  for (let tau = 1; tau <= hi + 1; tau++){
+    let a = 0, m = 0;
+    for (let i = 0, e = n - tau; i < e; i++){ const p = x[i], q = x[i+tau]; a += p*q; m += p*p + q*q; }
+    d[tau] = m ? 2*a/m : 0;
+  }
+  const pk = []; let st = false, pos = false, bt = -1, bv = -1;
+  for (let tau = 1; tau <= hi; tau++){
+    const v = d[tau];
+    if (!st){ if (v <= 0) st = true; continue; }
+    if (v > 0){ if (!pos){ pos = true; bt = -1; bv = -1; } if (v > bv){ bv = v; bt = tau; } }
+    else if (pos){ pos = false; if (bt >= lo) pk.push([bt, bv]); }
+  }
+  if (!pk.length) return null;
+  const top = Math.max(...pk.map(p => p[1])), [tau, c] = pk.find(p => p[1] >= .9*top);
+  const y0 = d[tau-1], y1 = d[tau], y2 = d[tau+1], den = y0 - 2*y1 + y2;
+  const f = sr/(tau + (den ? .5*(y0 - y2)/den : 0));
+  return { m: 69 + 12*Math.log2(f/440), c };
+}
+function readPitch(an, buf, minC, gate){
+  an.getFloatTimeDomainData(buf);
+  const f = Math.max(1, Math.round(ac.sampleRate/12000)), n = Math.floor(buf.length/f);
+  for (let i = 0; i < n; i++){ let s = 0; for (let j = 0; j < f; j++) s += buf[i*f+j]; buf[i] = s/f; }
+  const p = detect(buf, n, ac.sampleRate/f, 75, 1000, gate);
+  return p && p.c >= minC ? p.m : null;
+}
+const pcDist = (a, b) => { const d = (((a-b) % 12) + 12) % 12; return Math.min(d, 12-d); };
+
+/* ---------- YouTube player ---------- */
+window.onYouTubeIframeAPIReady = () => { ytReady = true; loadVideo(); };
+(function(){ const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api';
+  s.onerror = () => say('YouTube could not load. Check your connection and reload.', true); document.head.appendChild(s); })();
+
+function note(html){ const n = $('videoNote'); n.hidden = !html; if (html) n.innerHTML = html; }
+function loadVideo(){
+  const s = queue[cur];
+  embedBlocked = false;
+  if (isFile){ note('<span>Videos only play when this page is opened from an https link, not from a downloaded file.</span>'); return; }
+  if (!s){ note('<span>Add a song from the list to start.</span>'); return; }
+  if (!s.id){ note(`<span>This link isn't YouTube, so it can't play here.</span><a href="${encodeURI(s.url)}" target="_blank" rel="noopener">Open it in a new tab</a>`); return; }
+  if (!ytReady){ note('<span>Loading video…</span>'); return; }
+  note('');
+  if (player && player.cueVideoById){ player.cueVideoById(s.id); return; }
+  player = new YT.Player('player', {
+    videoId: s.id,
+    playerVars: { playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
+    events: { onReady: onPlayerReady, onStateChange: onPlayerState, onError: onPlayerError }
+  });
+}
+function onPlayerReady(){ updateTitle(); }
+function updateTitle(){
+  const s = queue[cur];
+  try{ const d = player.getVideoData(); if (s && d && d.title && s.title !== d.title){ s.title = d.title; save(); renderQueue(); showSetup(); } }catch(e){}
+}
+function onPlayerState(e){
+  playing = e.data === YT.PlayerState.PLAYING;
+  if (playing) updateTitle();
+  if (e.data === YT.PlayerState.ENDED && running) stop(true);
+}
+function onPlayerError(e){
+  embedBlocked = true;
+  const s = queue[cur], url = s ? `https://www.youtube.com/watch?v=${s.id}` : '#';
+  const why = (e.data === 101 || e.data === 150) ? "The owner doesn't allow this video to play on other sites."
+            : e.data === 153 ? 'YouTube needs this page opened from an https link.'
+            : 'This video is unavailable.';
+  note(`<span>${why}</span><span>Try a karaoke version, or open it on YouTube and use Match the song.</span><a href="${url}" target="_blank" rel="noopener">Open on YouTube</a>`);
+  if (running) stop(false);
+  showSetup();
+}
+
+/* ---------- queue ---------- */
+let queue = [], cur = 0;
+try{ const s = JSON.parse(localStorage.getItem('singq') || '{}'); queue = s.queue || []; cur = s.cur || 0; }catch(e){}
+const save = () => { try{ localStorage.setItem('singq', JSON.stringify({queue, cur})); }catch(e){} };
+
+function parseYouTube(u){
+  try{
+    const url = new URL(u);
+    if (url.hostname.includes('youtu.be')) return url.pathname.slice(1).split('/')[0] || null;
+    if (url.hostname.includes('youtube.com')){
+      if (url.searchParams.get('v')) return url.searchParams.get('v');
+      const m = url.pathname.match(/\/(shorts|embed|live)\/([\w-]{6,})/); if (m) return m[2];
+    }
+  }catch(e){}
+  return null;
+}
+$('linkForm').addEventListener('submit', e => { e.preventDefault(); addLinks(); });
+$('addBtn').addEventListener('click', addLinks);
+$('link').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addLinks(); } });
+$('link').addEventListener('paste', () => setTimeout(addLinks, 0));
+function addLinks(){
+  const parts = $('link').value.split(/[\s,]+/).filter(Boolean);
+  if (!parts.length) return;
+  const wasEmpty = !queue.length, added = [];
+  for (const p of parts){
+    let u = /^https?:\/\//i.test(p) ? p : 'https://' + p;
+    try{ new URL(u); }catch(err){ continue; }
+    const id = parseYouTube(u);
+    const item = {url:u, id, title: id ? 'YouTube video' : new URL(u).hostname, score:null};
+    queue.push(item); added.push(item);
+  }
+  if (!added.length){ say('No links found. Paste full links, separated by spaces or new lines.', true); return; }
+  $('link').value = '';
+  added.forEach(fetchTitle);
+  save(); renderQueue();
+  if (wasEmpty) select(0); else say(`Added ${added.length} song${added.length > 1 ? 's' : ''}.`);
+}
+async function fetchTitle(item){
+  if (!item.id) return;
+  try{
+    const r = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent('https://www.youtube.com/watch?v=' + item.id)}`);
+    if (r.ok){ item.title = (await r.json()).title; save(); renderQueue(); if (item === queue[cur]) showSetup(); }
+  }catch(e){}
+}
+function renderQueue(){
+  const ol = $('queue'); ol.innerHTML = '';
+  $('emptyQ').hidden = queue.length > 0;
+  queue.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.className = i === cur ? 'cur' : ''; li.dataset.i = i;
+    li.innerHTML = `<span class="grip" aria-hidden="true">⋮⋮</span>
+      ${s.id ? `<img alt="" src="https://i.ytimg.com/vi/${encodeURIComponent(s.id)}/mqdefault.jpg">` : ''}
+      <button class="pick"><span></span><small>${s.score !== null ? 'Last score ' + s.score : i === cur ? 'Up now' : 'In queue'}</small></button>
+      <button class="icon up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+      <button class="icon down" aria-label="Move down" ${i === queue.length - 1 ? 'disabled' : ''}>↓</button>
+      <button class="icon del" aria-label="Remove">×</button>`;
+    li.querySelector('.pick span').textContent = s.title;
+    li.querySelector('.pick').onclick = () => { if (i === cur) return; if (running) stop(false); select(i); };
+    li.querySelector('.up').onclick = () => move(i, i - 1);
+    li.querySelector('.down').onclick = () => move(i, i + 1);
+    li.querySelector('.del').onclick = () => remove(i);
+    li.querySelector('.grip').addEventListener('pointerdown', ev => dragStart(ev, li));
+    ol.appendChild(li);
+  });
+}
+function move(from, to){
+  if (to < 0 || to >= queue.length || from === to) return;
+  const curItem = queue[cur];
+  const [s] = queue.splice(from, 1); queue.splice(to, 0, s);
+  cur = queue.indexOf(curItem);
+  save(); renderQueue();
+}
+function remove(i){
+  const wasCur = i === cur;
+  if (wasCur && running) stop(false);
+  const curItem = queue[cur];
+  queue.splice(i, 1);
+  if (wasCur){ select(Math.min(i, queue.length - 1)); }
+  else { cur = queue.indexOf(curItem); save(); renderQueue(); }
+}
+function dragStart(ev, li){
+  ev.preventDefault();
+  const from = +li.dataset.i; let to = from;
+  li.classList.add('dragging');
+  const onMove = e => {
+    const items = [...$('queue').children];
+    to = items.findIndex(el => { const r = el.getBoundingClientRect(); return e.clientY < r.top + r.height/2; });
+    if (to === -1) to = items.length - 1; else if (to > from) to -= 1;
+  };
+  const onUp = () => {
+    removeEventListener('pointermove', onMove); removeEventListener('pointerup', onUp);
+    li.classList.remove('dragging'); move(from, to);
+  };
+  addEventListener('pointermove', onMove); addEventListener('pointerup', onUp);
+}
+function select(i){
+  cur = Math.max(0, i); save(); renderQueue();
+  $('final').hidden = true;
+  loadVideo(); showSetup();
+}
+function showSetup(){
+  const s = queue[cur], m = mode();
+  const playable = s && s.id && !isFile && !embedBlocked;
+  // Match mode can still work from a separate tab when the video can't play here.
+  $('startBtn').disabled = running || !s || (m === 'voice' && !playable);
+  $('startBtn').textContent = m === 'match' ? 'Connect and start' : 'Start';
+  if (running) return;
+  if (!s) say('Add a song, then press Start. Use headphones.');
+  else if (isFile) say('Open this page from an https link so the mic and videos work.', true);
+  else if (m === 'voice' && !playable) say("This song can't play here. Try another, or use Match the song.", true);
+  else if (m === 'match' && !playable) say('Open the song on YouTube, then press Connect and start and pick that tab.');
+  else if (m === 'match') say('Press Connect and start, choose "This tab" and keep "Share tab audio" on.');
+  else say(`Up now: ${s.title}`);
+}
+document.querySelectorAll('input[name=mode]').forEach(r => r.addEventListener('change', () => { if (running) stop(false); showSetup(); }));
+$('nextBtn').addEventListener('click', () => select(cur + 1));
+
+/* ---------- start / stop ---------- */
+async function getMic(){
+  if (micA) return;
+  micStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
+  micA = ac.createAnalyser(); micA.fftSize = 2048; micBuf = new Float32Array(2048);
+  ac.createMediaStreamSource(micStream).connect(micA);
+}
+async function getTab(sameTab){
+  tabStream = await navigator.mediaDevices.getDisplayMedia({
+    video:true, audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,suppressLocalAudioPlayback:false},
+    preferCurrentTab: sameTab, selfBrowserSurface: sameTab ? 'include' : 'exclude'
+  });
+  if (!tabStream.getAudioTracks().length){ tabStream.getTracks().forEach(x => x.stop()); tabStream = null; throw new Error('noaudio'); }
+  const src = ac.createMediaStreamSource(new MediaStream(tabStream.getAudioTracks()));
+  const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 160;
+  const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1200;
+  songA = ac.createAnalyser(); songA.fftSize = 2048; songBuf = new Float32Array(2048);
+  src.connect(hp).connect(lp).connect(songA);
+  tabStream.getAudioTracks()[0].addEventListener('ended', () => running && stop(true));
+}
+$('startBtn').addEventListener('click', async () => {
+  const s = queue[cur], m = mode();
+  const playable = s && s.id && !isFile && !embedBlocked && player && player.playVideo;
+  // Start the video inside the click so browsers allow sound.
+  if (playable && m === 'voice') player.playVideo();
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  await ac.resume();
+  try{ await getMic(); }
+  catch(e){ if (player && player.pauseVideo) player.pauseVideo(); say('Microphone is blocked. Allow it in the browser, then press Start again.', true); return; }
+  if (m === 'match'){
+    try{ await getTab(!!playable); }
+    catch(e){ say(e.message === 'noaudio' ? 'No audio came through. Turn on "Share tab audio" and try again.' : 'Sharing was cancelled. Press Connect and start to try again.', true); return; }
+    if (playable) player.playVideo();
+  }
+  reset(); running = true; lastNow = performance.now()/1000;
+  $('final').hidden = true; $('startBtn').disabled = true; $('stopBtn').disabled = false;
+  say(playable ? 'Listening. Sing along.' : 'Listening to the song tab and to you.');
+  requestAnimationFrame(tick);
+});
+$('stopBtn').addEventListener('click', () => stop(true));
+function reset(){
+  points = total = sung = t = 0; micTrail = []; songTrail = []; fracs = []; hist.fill(0); lastSang = -99;
+  judgeWin = {s:0, d:0, t:0};
+  $('score').textContent = '0'; $('judge').textContent = ''; $('meta').textContent = 'Sung 0:00';
+}
+function stop(showFinal){
+  running = false;
+  if (tabStream){ tabStream.getTracks().forEach(x => x.stop()); tabStream = null; songA = null; }
+  try{ if (player && player.pauseVideo) player.pauseVideo(); }catch(e){}
+  $('stopBtn').disabled = true;
+  showSetup();
+  if (!showFinal) return;
+  const sc = total ? shown(points/total) : 0;
+  if (total && queue[cur]){ queue[cur].score = sc; save(); renderQueue(); }
+  $('finalScore').textContent = sc;
+  $('finalMsg').textContent = !total ? 'No singing heard.' : sc >= 90 ? 'Superstar.' : sc >= 75 ? 'Great singing.' : sc >= 55 ? 'Nice one.' : 'Warm up and go again.';
+  $('nextBtn').hidden = cur >= queue.length - 1;
+  $('final').hidden = false;
+  say(cur < queue.length - 1 ? `Next up: ${queue[cur+1].title}` : 'That was the last song. Press Start to sing it again.');
+}
+const shown = acc => Math.round(100*Math.pow(Math.max(0, acc), .6));
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+/* ---------- scoring ---------- */
+function voiceQuality(m, dt){
+  fracs.push(m - Math.round(m)); if (fracs.length > 300) fracs.shift();
+  let sx = 0, sy = 0; for (const f of fracs){ sx += Math.cos(2*Math.PI*f); sy += Math.sin(2*Math.PI*f); }
+  const off = Math.atan2(sy, sx)/(2*Math.PI);
+  const cents = Math.abs((m - off) - Math.round(m - off))*100;
+  // Real singing has vibrato and drift, so allow up to 25 cents for full marks.
+  const tune = cents <= 25 ? 1 : cents <= 40 ? .8 : cents <= 55 ? .5 : .2;
+  const pc = ((Math.round(m - off) % 12) + 12) % 12;
+  hist[pc] += dt;
+  let inKey = 1;
+  if (sung > 15){
+    let best = 0, key = 0;
+    for (let k = 0; k < 12; k++){ let s = 0; for (const i of [0,2,4,5,7,9,11]) s += hist[(k+i)%12]; if (s > best){ best = s; key = k; } }
+    inKey = [0,2,4,5,7,9,11].includes((pc - key + 12) % 12) ? 1 : .8;
+  }
+  return tune*inKey;
+}
+function matchQuality(m){
+  let best = 99;
+  for (const p of songTrail) if (p.t >= t - .6) best = Math.min(best, pcDist(m, p.m));
+  return best <= .75 ? 1 : best <= 1.5 ? .75 : best <= 2.5 ? .4 : .15;
+}
+// Steady the mic reading and skip slides between notes.
+let recent = [], prevMic = null;
+function steady(raw, dt){
+  if (raw === null){ recent = []; prevMic = null; return {m:null, glide:false}; }
+  recent.push(raw); if (recent.length > 5) recent.shift();
+  const m = [...recent].sort((a,b) => a-b)[recent.length >> 1];
+  const glide = recent.length < 3 || (prevMic !== null && Math.abs(m - prevMic)/Math.max(dt, .001) > 8);
+  prevMic = m;
+  return {m, glide};
+}
+
+function tick(){
+  if (!running) return;
+  const now = performance.now()/1000, dt = Math.min(.1, now - lastNow); lastNow = now;
+  // Pause scoring while the embedded video is paused or buffering.
+  const videoMode = player && player.getPlayerState && !embedBlocked && queue[cur] && queue[cur].id && !isFile && (mode() === 'voice' || !songA || tabStream);
+  const active = mode() === 'match' && songA ? true : (!videoMode || playing);
+  if (active){
+    t += dt;
+    const {m: mic, glide} = steady(readPitch(micA, micBuf, .8, .012), dt);
+    let q = null;
+    if (mic !== null) sung += dt;
+    if (mode() === 'match' && songA){
+      const s = readPitch(songA, songBuf, .85, .008);
+      if (s !== null) songTrail.push({t, m:s});
+      const songOn = songTrail.some(p => p.t > t - .6);
+      // Only moments you're singing count, so breaths and instrumental parts don't lower the score.
+      if (mic !== null && !glide && songOn) q = matchQuality(mic);
+    } else if (mic !== null && !glide){
+      q = voiceQuality(mic, dt);
+    }
+    if (q !== null){
+      points += q*dt; total += dt;
+      if (mic !== null){ judgeWin.s += q*dt; judgeWin.d += dt; }
+    }
+    if (mic !== null) micTrail.push({t, m:mic, q: q ?? 0});
+    while (micTrail.length && micTrail[0].t < t - 6) micTrail.shift();
+    while (songTrail.length && songTrail[0].t < t - 6) songTrail.shift();
+    if (t - judgeWin.t > .7){
+      if (judgeWin.d > .25){ const v = judgeWin.s/judgeWin.d; $('judge').textContent = v >= .85 ? 'Perfect' : v >= .6 ? 'Great' : v >= .3 ? 'Good' : 'Miss'; }
+      else $('judge').textContent = '';
+      judgeWin = {s:0, d:0, t};
+    }
+    if (total) $('score').textContent = shown(points/total);
+    $('meta').textContent = `Sung ${fmt(sung)}`;
+    draw();
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- lane ---------- */
+function size(){ const r = devicePixelRatio || 1; canvas.width = canvas.clientWidth*r; canvas.height = canvas.clientHeight*r; g.setTransform(r,0,0,r,0,0); draw(); }
+function draw(){
+  const W = canvas.clientWidth, H = canvas.clientHeight, cs = getComputedStyle(document.documentElement);
+  const v = n => cs.getPropertyValue(n).trim();
+  g.clearRect(0, 0, W, H);
+  g.fillStyle = v('--line'); g.fillRect(0, H/2, W, 1);
+  const all = micTrail.concat(songTrail).map(p => p.m).sort((a,b) => a-b);
+  const mid = all.length ? all[all.length >> 1] : 60;
+  const y = m => { while (m - mid > 9) m -= 12; while (mid - m > 9) m += 12; return H/2 - (m - mid)*(H/22); };
+  const x = pt => W - (t - pt)*(W/6);
+  g.fillStyle = v('--muted'); g.globalAlpha = .45;
+  for (const p of songTrail) g.fillRect(x(p.t) - 2, y(p.m) - 1, 4, 2);
+  for (const p of micTrail){
+    g.fillStyle = p.q >= .85 ? v('--good') : p.q >= .5 ? v('--accent') : v('--ink');
+    g.globalAlpha = p.q >= .5 ? 1 : .35;
+    g.beginPath(); g.arc(x(p.t), y(p.m), 2.6, 0, Math.PI*2); g.fill();
+  }
+  g.globalAlpha = 1;
+}
+addEventListener('resize', size);
+size();
+renderQueue();
+select(Math.min(cur, Math.max(0, queue.length - 1)));
+</script>
+</body>
+</html>
