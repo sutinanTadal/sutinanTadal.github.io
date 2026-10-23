@@ -39,6 +39,15 @@ const GAMES = [
     external: true,
     accent: 'accent-red',
   },
+  {
+    id: 'rongke',
+    title: 'Rongke',
+    tag: 'Karaoke',
+    icon: '🎤',
+    desc: 'Queue up YouTube songs, sing along, and get a live score as you sing. Grab headphones and a mic.',
+    src: 'rongke/index.html',
+    accent: 'accent-purple',
+  },
 ];
 
 // ── Render nav buttons ─────────────────────────────────────────

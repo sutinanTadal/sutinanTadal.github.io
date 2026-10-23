@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Sing Score</title>
+<title>Rongke</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -85,7 +85,7 @@ canvas{width:100%;height:110px;display:block}
 </head>
 <body>
 <div class="app">
-  <h1>Sing Score</h1>
+  <h1>Rongke</h1>
 
   <div class="video" id="video">
     <div id="player"></div>
@@ -137,9 +137,9 @@ const canvas = $('lane'), g = canvas.getContext('2d');
 let ac, micA, songA, micBuf, songBuf, micStream, tabStream;
 let running = false, playing = false, t = 0, lastNow = 0;
 let points = 0, total = 0, sung = 0;
-let micTrail = [], songTrail = [], lastSang = -99;
+let micTrail = [], songTrail = [], firstSang = -1, perfect = 0, notes = [];
 let fracs = [], hist = new Float32Array(12), judgeWin = {s:0, d:0, t:0};
-let player = null, ytReady = false, embedBlocked = false;
+let player = null, ytReady = false, embedBlocked = false, lastRms = 0, micLevel = 0;
 
 const isFile = location.protocol === 'file:';
 const canShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -150,7 +150,8 @@ function say(msg, warn){ $('status').textContent = msg; $('status').classList.to
 /* ---------- pitch (McLeod NSDF) ---------- */
 function detect(x, n, sr, minF, maxF, gate){
   let rms = 0; for (let i = 0; i < n; i++) rms += x[i]*x[i];
-  if (Math.sqrt(rms/n) < gate) return null;
+  lastRms = Math.sqrt(rms/n);
+  if (lastRms < gate) return null;
   const lo = Math.max(2, Math.floor(sr/maxF)), hi = Math.min(Math.ceil(sr/minF), n >> 1);
   const d = new Float32Array(hi + 2);
   for (let tau = 1; tau <= hi + 1; tau++){
@@ -274,7 +275,7 @@ function renderQueue(){
     li.className = i === cur ? 'cur' : ''; li.dataset.i = i;
     li.innerHTML = `<span class="grip" aria-hidden="true">⋮⋮</span>
       ${s.id ? `<img alt="" src="https://i.ytimg.com/vi/${encodeURIComponent(s.id)}/mqdefault.jpg">` : ''}
-      <button class="pick"><span></span><small>${s.score !== null ? 'Last score ' + s.score : i === cur ? 'Up now' : 'In queue'}</small></button>
+      <button class="pick"><span></span><small>${s.score != null ? `Last ${s.score} · Best ${s.best ?? s.score}` : i === cur ? 'Up now' : 'In queue'}</small></button>
       <button class="icon up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>↑</button>
       <button class="icon down" aria-label="Move down" ${i === queue.length - 1 ? 'disabled' : ''}>↓</button>
       <button class="icon del" aria-label="Remove">×</button>`;
@@ -342,7 +343,7 @@ $('nextBtn').addEventListener('click', () => select(cur + 1));
 /* ---------- start / stop ---------- */
 async function getMic(){
   if (micA) return;
-  micStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});
+  micStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:true}});
   micA = ac.createAnalyser(); micA.fftSize = 2048; micBuf = new Float32Array(2048);
   ac.createMediaStreamSource(micStream).connect(micA);
 }
@@ -380,7 +381,8 @@ $('startBtn').addEventListener('click', async () => {
 });
 $('stopBtn').addEventListener('click', () => stop(true));
 function reset(){
-  points = total = sung = t = 0; micTrail = []; songTrail = []; fracs = []; hist.fill(0); lastSang = -99;
+  points = total = sung = t = perfect = 0; micTrail = []; songTrail = []; fracs = []; hist.fill(0);
+  firstSang = -1; notes = []; recent = []; prevMic = null; gap = 0;
   judgeWin = {s:0, d:0, t:0};
   $('score').textContent = '0'; $('judge').textContent = ''; $('meta').textContent = 'Sung 0:00';
 }
@@ -391,15 +393,25 @@ function stop(showFinal){
   $('stopBtn').disabled = true;
   showSetup();
   if (!showFinal) return;
-  const sc = total ? shown(points/total) : 0;
-  if (total && queue[cur]){ queue[cur].score = sc; save(); renderQueue(); }
+  const sc = current(), s = queue[cur], best = s && s.best != null ? s.best : -1;
+  if (total && s){ s.score = sc; s.best = Math.max(best, sc); save(); renderQueue(); }
   $('finalScore').textContent = sc;
-  $('finalMsg').textContent = !total ? 'No singing heard.' : sc >= 90 ? 'Superstar.' : sc >= 75 ? 'Great singing.' : sc >= 55 ? 'Nice one.' : 'Warm up and go again.';
+  $('finalMsg').textContent = !total ? 'No singing heard.'
+    : (sc >= 90 ? 'Superstar.' : sc >= 75 ? 'Great singing.' : sc >= 55 ? 'Nice one.' : 'Warm up and go again.')
+      + (sc > best && best >= 0 ? ' New best!' : '')
+      + ` Spot on ${Math.round(100*perfect/total)}% of ${fmt(total)} sung.`;
   $('nextBtn').hidden = cur >= queue.length - 1;
   $('final').hidden = false;
   say(cur < queue.length - 1 ? `Next up: ${queue[cur+1].title}` : 'That was the last song. Press Start to sing it again.');
 }
 const shown = acc => Math.round(100*Math.pow(Math.max(0, acc), .6));
+// Only singing is scored, so a few perfect seconds then silence would get 100.
+// Expect singing for at least 35% of the time since your first note.
+function current(){
+  if (!total) return 0;
+  const span = t - firstSang;
+  return Math.round(shown(points/total) * (span > 10 ? Math.min(1, total/(.35*span)) : 1));
+}
 const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 
 /* ---------- scoring ---------- */
@@ -410,7 +422,12 @@ function voiceQuality(m, dt){
   const cents = Math.abs((m - off) - Math.round(m - off))*100;
   // Real singing has vibrato and drift, so allow up to 25 cents for full marks.
   const tune = cents <= 25 ? 1 : cents <= 40 ? .8 : cents <= 55 ? .5 : .2;
-  const pc = ((Math.round(m - off) % 12) + 12) % 12;
+  const n = Math.round(m - off), pc = ((n % 12) + 12) % 12;
+  // Holding one note in tune isn't singing a song: want a few different notes every 10 s.
+  notes.push({t, n, dt}); while (notes[0].t < t - 10) notes.shift();
+  const held = new Map(); for (const x of notes) held.set(x.n, (held.get(x.n) || 0) + x.dt);
+  const distinct = [...held.values()].filter(d => d >= .2).length;
+  const variety = t - notes[0].t < 5 ? 1 : [.3, .3, .7][distinct] ?? 1;
   hist[pc] += dt;
   let inKey = 1;
   if (sung > 15){
@@ -418,7 +435,7 @@ function voiceQuality(m, dt){
     for (let k = 0; k < 12; k++){ let s = 0; for (const i of [0,2,4,5,7,9,11]) s += hist[(k+i)%12]; if (s > best){ best = s; key = k; } }
     inKey = [0,2,4,5,7,9,11].includes((pc - key + 12) % 12) ? 1 : .8;
   }
-  return tune*inKey;
+  return tune*inKey*variety;
 }
 function matchQuality(m){
   let best = 99;
@@ -426,9 +443,14 @@ function matchQuality(m){
   return best <= .75 ? 1 : best <= 1.5 ? .75 : best <= 2.5 ? .4 : .15;
 }
 // Steady the mic reading and skip slides between notes.
-let recent = [], prevMic = null;
+let recent = [], prevMic = null, gap = 0;
 function steady(raw, dt){
-  if (raw === null){ recent = []; prevMic = null; return {m:null, glide:false}; }
+  if (raw === null){
+    // Ride through a few missed frames so one dropout doesn't throw away the next ones.
+    if ((gap += dt) > .08){ recent = []; prevMic = null; }
+    return {m:null, glide:false};
+  }
+  gap = 0;
   recent.push(raw); if (recent.length > 5) recent.shift();
   const m = [...recent].sort((a,b) => a-b)[recent.length >> 1];
   const glide = recent.length < 3 || (prevMic !== null && Math.abs(m - prevMic)/Math.max(dt, .001) > 8);
@@ -444,7 +466,8 @@ function tick(){
   const active = mode() === 'match' && songA ? true : (!videoMode || playing);
   if (active){
     t += dt;
-    const {m: mic, glide} = steady(readPitch(micA, micBuf, .8, .012), dt);
+    const {m: mic, glide} = steady(readPitch(micA, micBuf, .72, .006), dt);
+    micLevel = lastRms;
     let q = null;
     if (mic !== null) sung += dt;
     if (mode() === 'match' && songA){
@@ -458,6 +481,8 @@ function tick(){
     }
     if (q !== null){
       points += q*dt; total += dt;
+      if (firstSang < 0) firstSang = t;
+      if (q >= .85) perfect += dt;
       if (mic !== null){ judgeWin.s += q*dt; judgeWin.d += dt; }
     }
     if (mic !== null) micTrail.push({t, m:mic, q: q ?? 0});
@@ -468,7 +493,7 @@ function tick(){
       else $('judge').textContent = '';
       judgeWin = {s:0, d:0, t};
     }
-    if (total) $('score').textContent = shown(points/total);
+    if (total) $('score').textContent = current();
     $('meta').textContent = `Sung ${fmt(sung)}`;
     draw();
   }
@@ -482,6 +507,9 @@ function draw(){
   const v = n => cs.getPropertyValue(n).trim();
   g.clearRect(0, 0, W, H);
   g.fillStyle = v('--line'); g.fillRect(0, H/2, W, 1);
+  // Mic level on the left edge: if it never moves, the app can't hear you.
+  const lv = Math.min(1, micLevel/.08)*H;
+  g.fillStyle = micLevel >= .006 ? v('--good') : v('--muted'); g.fillRect(0, H - lv, 3, lv);
   const all = micTrail.concat(songTrail).map(p => p.m).sort((a,b) => a-b);
   const mid = all.length ? all[all.length >> 1] : 60;
   const y = m => { while (m - mid > 9) m -= 12; while (mid - m > 9) m += 12; return H/2 - (m - mid)*(H/22); };
